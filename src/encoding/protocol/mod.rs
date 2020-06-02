@@ -5,25 +5,25 @@ mod simple;
 pub use simple::*;
 
 pub trait EncodingProtocol {
-    fn write_u8(&self, sink: &mut dyn BitSink, value: u8) -> Result<(),WriteError>;
+    fn write_u8(&self, sink: &mut dyn BitSink, value: u8) -> Result<(), WriteError>;
 
-    fn write_i8(&self, sink: &mut dyn BitSink, value: i8) -> Result<(),WriteError>;
+    fn write_i8(&self, sink: &mut dyn BitSink, value: i8) -> Result<(), WriteError>;
 
-    fn write_u16(&self, sink: &mut dyn BitSink, value: u16) -> Result<(),WriteError>;
+    fn write_u16(&self, sink: &mut dyn BitSink, value: u16) -> Result<(), WriteError>;
 
-    fn write_i16(&self, sink: &mut dyn BitSink, value: i16) -> Result<(),WriteError>;
+    fn write_i16(&self, sink: &mut dyn BitSink, value: i16) -> Result<(), WriteError>;
 
-    fn write_u32(&self, sink: &mut dyn BitSink, value: u32) -> Result<(),WriteError>;
+    fn write_u32(&self, sink: &mut dyn BitSink, value: u32) -> Result<(), WriteError>;
 
-    fn write_i32(&self, sink: &mut dyn BitSink, value: i32) -> Result<(),WriteError>;
+    fn write_i32(&self, sink: &mut dyn BitSink, value: i32) -> Result<(), WriteError>;
 
-    fn write_u64(&self, sink: &mut dyn BitSink, value: u64) -> Result<(),WriteError>;
+    fn write_u64(&self, sink: &mut dyn BitSink, value: u64) -> Result<(), WriteError>;
 
-    fn write_i64(&self, sink: &mut dyn BitSink, value: i64) -> Result<(),WriteError>;
+    fn write_i64(&self, sink: &mut dyn BitSink, value: i64) -> Result<(), WriteError>;
 
-    fn write_u128(&self, sink: &mut dyn BitSink, value: u128) -> Result<(),WriteError>;
+    fn write_u128(&self, sink: &mut dyn BitSink, value: u128) -> Result<(), WriteError>;
 
-    fn write_i128(&self, sink: &mut dyn BitSink, value: i128) -> Result<(),WriteError>;
+    fn write_i128(&self, sink: &mut dyn BitSink, value: i128) -> Result<(), WriteError>;
 }
 
 /*
@@ -95,7 +95,10 @@ mod testing {
             assert!(character == '0' || character == '1');
         }
 
-        let as_bools: Vec<bool> = encoded.chars().map(|c| if c == '0' { false } else { true }).collect();
+        let as_bools: Vec<bool> = encoded
+            .chars()
+            .map(|c| if c == '0' { false } else { true })
+            .collect();
         let mut sink = BoolVecBitSink::with_capacity(as_bools.len());
 
         action(&mut sink);
