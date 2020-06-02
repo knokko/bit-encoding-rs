@@ -5,20 +5,18 @@ use crate::*;
 pub struct VoidBitSink {}
 
 impl VoidBitSink {
-
-    /// Creates a new instance of VoidBitSink. 
+    /// Creates a new instance of VoidBitSink.
     pub fn new() -> Self {
         Self {}
     }
 }
 
 impl BitSink for VoidBitSink {
-
-    fn write(&mut self, _bits: &[bool]) -> Result<(),WriteError> {
+    fn write(&mut self, _bits: &[bool]) -> Result<(), WriteError> {
         Ok(())
     }
 
-    fn finish(&mut self) -> Result<(),WriteError> {
+    fn finish(&mut self) -> Result<(), WriteError> {
         Ok(())
     }
 }
