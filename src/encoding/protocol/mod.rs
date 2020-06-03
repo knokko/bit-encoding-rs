@@ -92,11 +92,12 @@ mod testing {
 
     fn test_result(action: &mut dyn FnMut(&mut dyn BitSink), encoded: &str) {
         for character in encoded.chars() {
-            assert!(character == '0' || character == '1');
+            assert!(character == '0' || character == '1' || character == ' ');
         }
 
         let as_bools: Vec<bool> = encoded
             .chars()
+            .filter(|c| *c != ' ')
             .map(|c| if c == '0' { false } else { true })
             .collect();
         let mut sink = BoolVecBitSink::with_capacity(as_bools.len());
@@ -108,5 +109,9 @@ mod testing {
 
     pub fn test_u8_result(encoder: &dyn EncodingProtocol, value: u8, encoded: &str) {
         test_result(&mut |sink| encoder.write_u8(sink, value).unwrap(), encoded);
+    }
+
+    pub fn test_i8_result(encoder: &dyn EncodingProtocol, value: i8, encoded: &str) {
+        test_result(&mut |sink | encoder.write_i8(sink, value).unwrap(), encoded);
     }
 }

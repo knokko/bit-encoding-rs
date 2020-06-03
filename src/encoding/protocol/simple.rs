@@ -3,7 +3,7 @@ use crate::*;
 pub struct SimpleEncodingProtocol {}
 
 impl SimpleEncodingProtocol {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         SimpleEncodingProtocol {}
     }
 
@@ -80,13 +80,33 @@ mod tests {
 
     use crate::*;
 
-    use crate::encoding::protocol::testing::test_encoding_pair;
+    use crate::encoding::protocol::testing::*;
+
+    const ENCODER: SimpleEncodingProtocol = SimpleEncodingProtocol::new();
+
 
     #[test]
     fn test_symmetry() {
         test_encoding_pair(
-            &SimpleEncodingProtocol::new(),
+            &ENCODER,
             &SimpleDecodingProtocol::new(),
         );
+    }
+
+    #[test]
+    fn test_u8() {
+        test_u8_result(&ENCODER, 0, "0000 0000");
+        test_u8_result(&ENCODER, 5, "1010 0000");
+        test_u8_result(&ENCODER, 190, "0111 1101");
+        test_u8_result(&ENCODER, 255, "1111 1111");
+    }
+
+    #[test]
+    fn test_i8() {
+        test_i8_result(&ENCODER, 0, "0000 0000");
+        test_i8_result(&ENCODER, 13, "1011 0000");
+        test_i8_result(&ENCODER, 127, "1111 1110");
+        test_i8_result(&ENCODER, -128, "0000 0001");
+        test_i8_result(&ENCODER, -1, "1111 1111");
     }
 }
