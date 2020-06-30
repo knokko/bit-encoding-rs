@@ -108,5 +108,42 @@ mod tests {
         test_i8_result(&ENCODER, 127, "1111 1110");
         test_i8_result(&ENCODER, -128, "0000 0001");
         test_i8_result(&ENCODER, -1, "1111 1111");
+        test_i8_result(&ENCODER, -75, "1010 1101")
     }
+
+    #[test]
+    fn test_u16() {
+        test_u16_result(&ENCODER, 0, "0000 0000 0000 0000");
+        test_u16_result(&ENCODER, 9, "1001 0000 0000 0000");
+        test_u16_result(&ENCODER, 65_535, "1111 1111 1111 1111");
+    }
+
+    #[test]
+    fn test_i16() {
+        test_i16_result(&ENCODER, 0, "0000 0000 0000 0000");
+        test_i16_result(&ENCODER, 5, "1010 0000 0000 0000");
+        test_i16_result(&ENCODER, 32_767, "1111 1111 1111 1110");
+        test_i16_result(&ENCODER, -32_768, "0000 0000 0000 0001");
+        test_i16_result(&ENCODER, -3, "1011 1111 1111 1111");
+        test_i16_result(&ENCODER, -1, "1111 1111 1111 1111");
+    }
+
+    #[test]
+    fn test_u32() {
+        test_u32_result(&ENCODER, 0, "0000 0000 0000 0000  0000 0000 0000 0000");
+        test_u32_result(&ENCODER, 11, "1101 0000 0000 0000  0000 0000 0000 0000");
+        test_u32_result(&ENCODER, 4_294_967_295, "1111 1111 1111 1111  1111 1111 1111 1111")
+    }
+
+    #[test]
+    fn test_i32() {
+        test_i32_result(&ENCODER, 0, "0000 0000 0000 0000  0000 0000 0000 0000");
+        test_i32_result(&ENCODER, 6, "0110 0000 0000 0000  0000 0000 0000 0000");
+        test_i32_result(&ENCODER, 2_147_483_647, "1111 1111 1111 1111  1111 1111 1111 1110");
+        test_i32_result(&ENCODER, -2_147_483_648, "0000 0000 0000 0000  0000 0000 0000 0001");
+        test_i32_result(&ENCODER, -4, "0011 1111 1111 1111  1111 1111 1111 1111");
+        test_i32_result(&ENCODER, -1, "1111 1111 1111 1111  1111 1111 1111 1111");
+    }
+
+    // TODO Perhaps unit tests for iu64 and iu128 as well, but these strings are long...
 }

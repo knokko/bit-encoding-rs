@@ -114,4 +114,36 @@ mod testing {
     pub fn test_i8_result(encoder: &dyn EncodingProtocol, value: i8, encoded: &str) {
         test_result(&mut |sink | encoder.write_i8(sink, value).unwrap(), encoded);
     }
+
+    pub fn test_u16_result(encoder: &dyn EncodingProtocol, value: u16, encoded: &str) {
+        test_result(&mut |sink| encoder.write_u16(sink, value).unwrap(), encoded);
+    }
+
+    pub fn test_i16_result(encoder: &dyn EncodingProtocol, value: i16, encoded: &str) {
+        test_result(&mut |sink| encoder.write_i16(sink, value).unwrap(), encoded);
+    }
+
+    pub fn test_u32_result(encoder: &dyn EncodingProtocol, value: u32, encoded: &str) {
+        test_result(&mut |sink| encoder.write_u32(sink, value).unwrap(), encoded);
+    }
+
+    pub fn test_i32_result(encoder: &dyn EncodingProtocol, value: i32, encoded: &str) {
+        test_result(&mut |sink| encoder.write_i32(sink, value).unwrap(), encoded);
+    }
+
+    pub fn test_u64_result(encoder: &dyn EncodingProtocol, value: u64, encoded: &str) {
+        test_result(&mut |sink| encoder.write_u64(sink, value).unwrap(), encoded);
+    }
+
+    pub fn test_i64_result(encoder: &dyn EncodingProtocol, value: i64, encoded: &str) {
+        test_result(&mut |sink| encoder.write_i64(sink, value).unwrap(), encoded);
+    }
+
+    pub fn test_u128_result(encoder: &dyn EncodingProtocol, value: u128, encoded: &str) {
+        test_result(&mut |sink| encoder.write_u128(sink, value).unwrap(), encoded);
+    }
+
+    pub fn test_i128_result(encoder: &dyn EncodingProtocol, value: i128, encoded: &str) {
+        test_result(&mut |sink| encoder.write_i128(sink, value).unwrap(), encoded);
+    }
 }
