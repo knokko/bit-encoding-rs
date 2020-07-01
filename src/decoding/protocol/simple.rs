@@ -1,5 +1,9 @@
 use crate::*;
 
+/// The simple implementation of *EncodingProtocol*. This implementation will
+/// not try to encode any data type compactly, but rather use a simple encoding
+/// based on their binary representation. The corresponding encoding protocol is
+/// *SimpleEncodingProtocol*. 
 pub struct SimpleDecodingProtocol {}
 
 impl SimpleDecodingProtocol {
