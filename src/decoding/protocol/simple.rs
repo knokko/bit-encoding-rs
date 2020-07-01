@@ -37,7 +37,7 @@ impl SimpleDecodingProtocol {
         num_bits: usize,
     ) -> Result<i128, DecodeError> {
         let unsigned = self.read_unsigned(source, num_bits)?;
-        if unsigned >= 1 << num_bits {
+        if num_bits < 128 && unsigned >= 1 << num_bits {
             Ok((unsigned - (1 << num_bits)) as i128)
         } else {
             Ok(unsigned as i128)

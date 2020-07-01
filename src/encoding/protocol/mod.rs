@@ -21,16 +21,19 @@ pub use simple::*;
 /// *DecodingProtocol*, you can use them like this:
 ///
 /// ```
+///
+/// use bit_encoding::*;
+///
 /// fn encode_some_data(encoder: &dyn EncodingProtocol, sink: &mut dyn BitSink) {
-///     encoder.write_u8(12);
-///     encoder.write_i32(1234);
-///     encoder.write_i16(-6789);
+///     encoder.write_u8(sink, 12).unwrap();
+///     encoder.write_i32(sink, 1234).unwrap();
+///     encoder.write_i16(sink, -6789).unwrap();
 /// }
 ///
 /// fn decode_that_data(decoder: &dyn DecodingProtocol, source: &mut dyn BitSource){
-///     assert_eq!(12, decoder.read_u8());
-///     assert_eq!(1234, decoder.read_i32());
-///     assert_eq!(-6789, decoder.read_i16());
+///     assert_eq!(12, decoder.read_u8(source).unwrap());
+///     assert_eq!(1234, decoder.read_i32(source).unwrap());
+///     assert_eq!(-6789, decoder.read_i16(source).unwrap());
 /// }
 /// ```
 /// Note that the order of writes and reads must be the same and that *source*
@@ -76,16 +79,25 @@ pub trait EncodingProtocol {
  * For some reason, I get dead code warnings for all methods in the testing module
  * unless I allow it like here.
  */
-#[allow(dead_code)]
+#[cfg(test)]
 pub(crate) mod testing {
 
     use crate::*;
+
+    use rand::distributions::Standard;
+    use rand::prelude::*;
 
     pub fn test_encoding_pair(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol) {
         test_u8(encoder, decoder);
         test_i8(encoder, decoder);
         test_u16(encoder, decoder);
         test_i16(encoder, decoder);
+        test_u32(encoder, decoder);
+        test_i32(encoder, decoder);
+        test_u64(encoder, decoder);
+        test_i64(encoder, decoder);
+        test_u128(encoder, decoder);
+        test_i128(encoder, decoder);
     }
 
     fn test_u8(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol) {
@@ -134,6 +146,119 @@ pub(crate) mod testing {
         for value in -32768..=32767 {
             assert_eq!(value, decoder.read_i16(&mut source).unwrap());
         }
+    }
+
+    const RANDOM_AMOUNT: usize = 10_000;
+
+    fn test_random_symmetry<T: Copy + Eq + std::fmt::Debug>(
+        write_method: &dyn Fn(&mut dyn BitSink, T) -> Result<(), WriteError>,
+        read_method: &dyn Fn(&mut dyn BitSource) -> Result<T, DecodeError>,
+    ) where
+        Standard: Distribution<T>,
+    {
+        let mut rng = rand::thread_rng();
+        let mut values = Vec::with_capacity(RANDOM_AMOUNT);
+        for _counter in 0..RANDOM_AMOUNT {
+            values.push(rng.gen());
+        }
+
+        let mut sink = BoolVecBitSink::new();
+        for value in &values {
+            write_method(&mut sink, *value).unwrap();
+        }
+
+        let mut source = BoolSliceBitSource::new(sink.get_bits());
+        for value in &values {
+            assert_eq!(*value, read_method(&mut source).unwrap());
+        }
+    }
+
+    fn test_given_symmetry<T: Copy + Eq + std::fmt::Debug>(
+        values: &[T],
+        write_method: &dyn Fn(&mut dyn BitSink, T) -> Result<(), WriteError>,
+        read_method: &dyn Fn(&mut dyn BitSource) -> Result<T, DecodeError>,
+    ) {
+        let mut sink = BoolVecBitSink::new();
+        for value in values {
+            write_method(&mut sink, *value).unwrap();
+        }
+
+        let mut source = BoolSliceBitSource::new(sink.get_bits());
+        for value in values {
+            assert_eq!(*value, read_method(&mut source).unwrap());
+        }
+    }
+
+    fn test_u32(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol) {
+        test_given_symmetry(
+            &[0, 1, u32::max_value()],
+            &|sink, value| encoder.write_u32(sink, value),
+            &|source| decoder.read_u32(source),
+        );
+
+        test_random_symmetry(&|sink, value| encoder.write_u32(sink, value), &|source| {
+            decoder.read_u32(source)
+        });
+    }
+
+    fn test_i32(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol) {
+        test_given_symmetry(
+            &[0, 1, -1, i32::max_value(), i32::min_value()],
+            &|sink, value| encoder.write_i32(sink, value),
+            &|source| decoder.read_i32(source),
+        );
+
+        test_random_symmetry(&|sink, value| encoder.write_i32(sink, value), &|source| {
+            decoder.read_i32(source)
+        });
+    }
+
+    fn test_u64(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol) {
+        test_given_symmetry(
+            &[0, 1, u64::max_value()],
+            &|sink, value| encoder.write_u64(sink, value),
+            &|source| decoder.read_u64(source),
+        );
+
+        test_random_symmetry(&|sink, value| encoder.write_u64(sink, value), &|source| {
+            decoder.read_u64(source)
+        });
+    }
+
+    fn test_i64(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol) {
+        test_given_symmetry(
+            &[0, 1, -1, i64::max_value(), i64::min_value()],
+            &|sink, value| encoder.write_i64(sink, value),
+            &|source| decoder.read_i64(source),
+        );
+
+        test_random_symmetry(&|sink, value| encoder.write_i64(sink, value), &|source| {
+            decoder.read_i64(source)
+        });
+    }
+
+    fn test_u128(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol) {
+        test_given_symmetry(
+            &[0, 1, u128::max_value()],
+            &|sink, value| encoder.write_u128(sink, value),
+            &|source| decoder.read_u128(source),
+        );
+
+        test_random_symmetry(&|sink, value| encoder.write_u128(sink, value), &|source| {
+            decoder.read_u128(source)
+        });
+    }
+
+    fn test_i128(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol) {
+        test_given_symmetry(
+            &[0, 1, -1, i128::max_value(), i128::min_value()],
+            &|sink, value| encoder.write_i128(sink, value),
+            &|source| decoder.read_i128(source),
+        );
+
+        test_random_symmetry(&|sink, value| encoder.write_i128(sink, value), &|source| {
+            decoder.read_i128(source)
+        });
     }
 
     fn test_result(

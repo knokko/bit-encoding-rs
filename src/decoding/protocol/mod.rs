@@ -21,16 +21,19 @@ pub use simple::*;
 /// *DecodingProtocol*, you can use them like this:
 ///
 /// ```
+///
+/// use bit_encoding::*;
+///
 /// fn encode_some_data(encoder: &dyn EncodingProtocol, sink: &mut dyn BitSink) {
-///     encoder.write_u8(12).unwrap();
-///     encoder.write_i32(1234).unwrap();
-///     encoder.write_i16(-6789).unwrap();
+///     encoder.write_u8(sink, 12).unwrap();
+///     encoder.write_i32(sink, 1234).unwrap();
+///     encoder.write_i16(sink, -6789).unwrap();
 /// }
 ///
 /// fn decode_that_data(decoder: &dyn DecodingProtocol, source: &mut dyn BitSource){
-///     assert_eq!(12, decoder.read_u8().unwrap());
-///     assert_eq!(1234, decoder.read_i32().unwrap());
-///     assert_eq!(-6789, decoder.read_i16().unwrap());
+///     assert_eq!(12, decoder.read_u8(source).unwrap());
+///     assert_eq!(1234, decoder.read_i32(source).unwrap());
+///     assert_eq!(-6789, decoder.read_i16(source).unwrap());
 /// }
 /// ```
 /// Note that the order of writes and reads must be the same and that *source*
@@ -76,6 +79,7 @@ pub trait DecodingProtocol {
     fn read_i128(&self, source: &mut dyn BitSource) -> Result<i128, DecodeError>;
 }
 
+#[cfg(test)]
 pub(crate) mod testing {
 
     use crate::*;

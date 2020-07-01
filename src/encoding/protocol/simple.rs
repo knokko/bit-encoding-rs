@@ -30,7 +30,7 @@ impl SimpleEncodingProtocol {
         num_bits: usize,
         mut value: i128,
     ) -> Result<(), WriteError> {
-        if value < 0 {
+        if value < 0 && num_bits < 128 {
             value += 1 << num_bits;
         }
         self.write_unsigned(sink, num_bits, value as u128)
@@ -91,7 +91,7 @@ mod tests {
 
     #[test]
     fn test_symmetry() {
-        test_encoding_pair(&ENCODER, &SimpleDecodingProtocol::new());
+        test_encoding_pair(&ENCODER, &DECODER);
     }
 
     #[test]
