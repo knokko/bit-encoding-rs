@@ -1,5 +1,8 @@
 use crate::*;
 
+use std::error::Error;
+use std::fmt::Display;
+
 /// Represents an error that occurred while trying to decode the data read
 /// from a `BitSource`.
 ///
@@ -71,4 +74,39 @@ impl LengthExceeded {
     pub fn get_read_length(&self) -> LengthType {
         self.read_length
     }
+}
+
+impl Display for DecodeError {
+
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(),std::fmt::Error> {
+        match self {
+            DecodeError::BigVecLength(length) => write!(f, 
+            "The decoder was asked to decode a Vec, but the length of the vector
+            appears to be {}, which is bigger than the maximum allowed length of
+            {}.", length.read_length, length.max_length),
+
+            DecodeError::BigStringLength(length) => write!(f,
+            "The decoder was asked to decode a String, but the length of the
+            string appears to be {}, which is bigger than the maximum allowed
+            length of {}. ", length.read_length, length.max_length),
+
+            DecodeError::VecLengthOverflow{length} => write!(f,
+            "The decoder was asked to decode a Vec, but the length of the vector
+            appears to be {}, which is bigger than the maximum value of the usize
+            on this machine {}. ", length, usize::max_value()),
+
+            DecodeError::StringLengthOverflow{length} => write!(f,
+            "The decoder was asked to decode a String, but the length of the
+            string appears to be {}, which is bigger than the maximum value of the
+            usize on this machine {}. ", length, usize::max_value()),
+
+            DecodeError::Reading(read_error) => write!(f,
+            "The following error occurred inside the BitSource the decoder was
+            reading from: {}", read_error)
+        }
+    }
+}
+
+impl Error for DecodeError {
+
 }
