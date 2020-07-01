@@ -31,7 +31,10 @@ pub mod testing {
     use crate::*;
 
     fn test_result<R: Eq + std::fmt::Debug>(
-        action: &mut dyn FnMut(&mut dyn BitSource) -> Result<R,DecodeError>, value: R, encoded: &str) {
+        action: &mut dyn FnMut(&mut dyn BitSource) -> Result<R, DecodeError>,
+        value: R,
+        encoded: &str,
+    ) {
         for character in encoded.chars() {
             assert!(character == '0' || character == '1' || character == ' ');
         }
@@ -52,7 +55,7 @@ pub mod testing {
     }
 
     pub fn test_i8_result(decoder: &dyn DecodingProtocol, value: i8, encoded: &str) {
-        test_result(&mut |source | decoder.read_i8(source), value, encoded);
+        test_result(&mut |source| decoder.read_i8(source), value, encoded);
     }
 
     pub fn test_u16_result(decoder: &dyn DecodingProtocol, value: u16, encoded: &str) {
