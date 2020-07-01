@@ -90,7 +90,7 @@ mod testing {
         }
     }
 
-    fn test_result(action: &mut dyn FnMut(&mut dyn BitSink), encoded: &str) {
+    fn test_result(action: &mut dyn FnMut(&mut dyn BitSink) -> Result<(), WriteError>, encoded: &str) {
         for character in encoded.chars() {
             assert!(character == '0' || character == '1' || character == ' ');
         }
@@ -102,48 +102,58 @@ mod testing {
             .collect();
         let mut sink = BoolVecBitSink::with_capacity(as_bools.len());
 
-        action(&mut sink);
+        action(&mut sink).unwrap();
 
         assert_eq!(as_bools, sink.get_bits());
     }
 
-    pub fn test_u8_result(encoder: &dyn EncodingProtocol, value: u8, encoded: &str) {
-        test_result(&mut |sink| encoder.write_u8(sink, value).unwrap(), encoded);
+    pub fn test_u8_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: u8, encoded: &str) {
+        test_result(&mut |sink| encoder.write_u8(sink, value), encoded);
+        decoding::testing::test_u8_result(decoder, value, encoded);
     }
 
-    pub fn test_i8_result(encoder: &dyn EncodingProtocol, value: i8, encoded: &str) {
-        test_result(&mut |sink | encoder.write_i8(sink, value).unwrap(), encoded);
+    pub fn test_i8_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: i8, encoded: &str) {
+        test_result(&mut |sink | encoder.write_i8(sink, value), encoded);
+        decoding::testing::test_i8_result(decoder, value, encoded);
     }
 
-    pub fn test_u16_result(encoder: &dyn EncodingProtocol, value: u16, encoded: &str) {
-        test_result(&mut |sink| encoder.write_u16(sink, value).unwrap(), encoded);
+    pub fn test_u16_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: u16, encoded: &str) {
+        test_result(&mut |sink| encoder.write_u16(sink, value), encoded);
+        decoding::testing::test_u16_result(decoder, value, encoded);
     }
 
-    pub fn test_i16_result(encoder: &dyn EncodingProtocol, value: i16, encoded: &str) {
-        test_result(&mut |sink| encoder.write_i16(sink, value).unwrap(), encoded);
+    pub fn test_i16_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: i16, encoded: &str) {
+        test_result(&mut |sink| encoder.write_i16(sink, value), encoded);
+        decoding::testing::test_i16_result(decoder, value, encoded);
     }
 
-    pub fn test_u32_result(encoder: &dyn EncodingProtocol, value: u32, encoded: &str) {
-        test_result(&mut |sink| encoder.write_u32(sink, value).unwrap(), encoded);
+    pub fn test_u32_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: u32, encoded: &str) {
+        test_result(&mut |sink| encoder.write_u32(sink, value), encoded);
+        decoding::testing::test_u32_result(decoder, value, encoded);
     }
 
-    pub fn test_i32_result(encoder: &dyn EncodingProtocol, value: i32, encoded: &str) {
-        test_result(&mut |sink| encoder.write_i32(sink, value).unwrap(), encoded);
+    pub fn test_i32_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: i32, encoded: &str) {
+        test_result(&mut |sink| encoder.write_i32(sink, value), encoded);
+        decoding::testing::test_i32_result(decoder, value, encoded);
     }
 
-    pub fn test_u64_result(encoder: &dyn EncodingProtocol, value: u64, encoded: &str) {
-        test_result(&mut |sink| encoder.write_u64(sink, value).unwrap(), encoded);
+    pub fn test_u64_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: u64, encoded: &str) {
+        test_result(&mut |sink| encoder.write_u64(sink, value), encoded);
+        decoding::testing::test_u64_result(decoder, value, encoded);
     }
 
-    pub fn test_i64_result(encoder: &dyn EncodingProtocol, value: i64, encoded: &str) {
-        test_result(&mut |sink| encoder.write_i64(sink, value).unwrap(), encoded);
+    pub fn test_i64_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: i64, encoded: &str) {
+        test_result(&mut |sink| encoder.write_i64(sink, value), encoded);
+        decoding::testing::test_i64_result(decoder, value, encoded);
     }
 
-    pub fn test_u128_result(encoder: &dyn EncodingProtocol, value: u128, encoded: &str) {
-        test_result(&mut |sink| encoder.write_u128(sink, value).unwrap(), encoded);
+    pub fn test_u128_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: u128, encoded: &str) {
+        test_result(&mut |sink| encoder.write_u128(sink, value), encoded);
+        decoding::testing::test_u128_result(decoder, value, encoded);
     }
 
-    pub fn test_i128_result(encoder: &dyn EncodingProtocol, value: i128, encoded: &str) {
-        test_result(&mut |sink| encoder.write_i128(sink, value).unwrap(), encoded);
+    pub fn test_i128_result(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol, value: i128, encoded: &str) {
+        test_result(&mut |sink| encoder.write_i128(sink, value), encoded);
+        decoding::testing::test_i128_result(decoder, value, encoded);
     }
 }

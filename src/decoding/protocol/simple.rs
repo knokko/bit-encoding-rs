@@ -3,7 +3,7 @@ use crate::*;
 pub struct SimpleDecodingProtocol {}
 
 impl SimpleDecodingProtocol {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {}
     }
 
@@ -82,3 +82,6 @@ impl DecodingProtocol for SimpleDecodingProtocol {
         self.read_signed(source, 128).map(|x| x as i128)
     }
 }
+
+// This implementation doesn't have its own unit tests, but is instead tested
+// alongside SimpleEncodingProtocol for more code reuse in tests.
