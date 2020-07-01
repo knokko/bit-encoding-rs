@@ -8,25 +8,25 @@ pub use simple::*;
 /// strings...) into a *BitSink*. Every implementation of this trait should have
 /// a corresponding *DecodingProtocol* that can decode the data types that were
 /// encoded by this encoder.
-/// 
-/// A simple implementation of *EncodingProtocol* would for instance encode 
+///
+/// A simple implementation of *EncodingProtocol* would for instance encode
 /// integers using their binary representation (writing 32 bools to encode
 /// a u32 value). In fact, this is what *SimpleEncodingProtocol* does.
-/// 
+///
 /// Such a simple implementation is perfect when every value has the same chance
 /// to be stored. However, smaller values are often more common, so a more clever
 /// protocol would exploit this by using lesser bools to store smaller numbers.
-/// 
+///
 /// When you have a corresponding pair of *EncodingProtocol* and
 /// *DecodingProtocol*, you can use them like this:
-/// 
+///
 /// ```
 /// fn encode_some_data(encoder: &dyn EncodingProtocol, sink: &mut dyn BitSink) {
 ///     encoder.write_u8(12);
 ///     encoder.write_i32(1234);
 ///     encoder.write_i16(-6789);
 /// }
-/// 
+///
 /// fn decode_that_data(decoder: &dyn DecodingProtocol, source: &mut dyn BitSource){
 ///     assert_eq!(12, decoder.read_u8());
 ///     assert_eq!(1234, decoder.read_i32());
@@ -34,14 +34,13 @@ pub use simple::*;
 /// }
 /// ```
 /// Note that the order of writes and reads must be the same and that *source*
-/// should read from *sink*. 
-/// 
+/// should read from *sink*.
+///
 /// Also note that both the read and write methods return *Result*s. That is
 /// because implementations of *BitSource* and *BitSink* can be backed by IO
 /// operations, which could fail. Furthermore, the *DecodingProtocol* has to
 /// be careful because it might deal with user input.
 pub trait EncodingProtocol {
-
     /// Encodes the given u8 value and writes it to *sink*
     fn write_u8(&self, sink: &mut dyn BitSink, value: u8) -> Result<(), WriteError>;
 

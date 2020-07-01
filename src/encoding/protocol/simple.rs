@@ -3,7 +3,7 @@ use crate::*;
 /// The simple implementation of *DecodingProtocol*. This implementation will
 /// not try to encode any data type compactly, but rather use a simple encoding
 /// based on their binary representation. The corresponding decoding protocol is
-/// *SimpleDecodingProtocol*. 
+/// *SimpleDecodingProtocol*.
 pub struct SimpleEncodingProtocol {}
 
 impl SimpleEncodingProtocol {
