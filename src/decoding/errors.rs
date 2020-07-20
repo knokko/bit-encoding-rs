@@ -45,6 +45,11 @@ pub enum DecodeError {
     /// This error indicates that an error occurred while reading the data
     /// needed to decode something.
     Reading(ReadError),
+
+    /// This error indicates that an implementation-specific error occurred
+    /// while decoding the data. This normally indicates a corrupted *BitSource*
+    /// or a programming error.
+    Other(Box<dyn Error>)
 }
 
 /// This indicates that some maximum length was exceeded during decoding
@@ -102,7 +107,10 @@ impl Display for DecodeError {
 
             DecodeError::Reading(read_error) => write!(f,
             "The following error occurred inside the BitSource the decoder was
-            reading from: {}", read_error)
+            reading from: {}", read_error),
+
+            DecodeError::Other(error) => write!(f,
+            "An implementation specific error occurred: {}", error)
         }
     }
 }
