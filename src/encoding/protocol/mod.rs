@@ -98,6 +98,52 @@ pub(crate) mod testing {
         test_i64(encoder, decoder);
         test_u128(encoder, decoder);
         test_i128(encoder, decoder);
+
+        // Combining them...
+        let mut sink = BoolVecBitSink::new();
+        write_combined(&mut sink, encoder).unwrap();
+
+        let mut source = BoolSliceBitSource::new(sink.get_bits());
+        read_combined(&mut source, decoder).unwrap();
+    }
+
+    fn write_combined(sink: &mut dyn BitSink, encoder: &dyn EncodingProtocol) -> Result<(), WriteError> {
+        encoder.write_i128(sink, -123456)?;
+        sink.write(&[true, false])?;
+        encoder.write_i64(sink, 987654321)?;
+        encoder.write_i32(sink, -13579)?;
+        encoder.write_i16(sink, 24680)?;
+        encoder.write_i8(sink, 123)?;
+        sink.write(&[false])?;
+        encoder.write_u8(sink, 200)?;
+        encoder.write_u16(sink, 23456)?;
+        encoder.write_u32(sink, 123456789)?;
+        sink.write(&[true])?;
+        encoder.write_u64(sink, 0)?;
+        encoder.write_u128(sink, 345678901234567)?;
+        Ok(())
+    }
+
+    fn read_combined(source: &mut dyn BitSource, decoder: &dyn DecodingProtocol) -> Result<(), DecodeError> {
+        assert_eq!(-123456, decoder.read_i128(source)?);
+        let mut dest = [false; 2];
+        source.read(&mut dest).unwrap();
+        assert_eq!(&[true, false], &dest);
+        assert_eq!(987654321, decoder.read_i64(source)?);
+        assert_eq!(-13579, decoder.read_i32(source)?);
+        assert_eq!(24680, decoder.read_i16(source)?);
+        assert_eq!(123, decoder.read_i8(source)?);
+        let mut dest = [true];
+        source.read(&mut dest).unwrap();
+        assert!(!dest[0]);
+        assert_eq!(200, decoder.read_u8(source)?);
+        assert_eq!(23456, decoder.read_u16(source)?);
+        assert_eq!(123456789, decoder.read_u32(source)?);
+        source.read(&mut dest).unwrap();
+        assert!(dest[0]);
+        assert_eq!(0, decoder.read_u64(source)?);
+        assert_eq!(345678901234567, decoder.read_u128(source)?);
+        Ok(())
     }
 
     fn test_u8(encoder: &dyn EncodingProtocol, decoder: &dyn DecodingProtocol) {
