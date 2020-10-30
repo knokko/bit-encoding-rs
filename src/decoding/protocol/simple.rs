@@ -11,7 +11,7 @@ impl SimpleDecodingProtocol {
         Self {}
     }
 
-    fn read_unsigned(
+    pub fn read_unsigned(
         &self,
         source: &mut dyn BitSource,
         num_bits: usize,
@@ -31,7 +31,7 @@ impl SimpleDecodingProtocol {
         Ok(result)
     }
 
-    fn read_signed(
+    pub fn read_signed(
         &self,
         source: &mut dyn BitSource,
         num_bits: usize,

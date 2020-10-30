@@ -11,7 +11,7 @@ impl SimpleEncodingProtocol {
         SimpleEncodingProtocol {}
     }
 
-    fn write_unsigned(
+    pub fn write_unsigned(
         &self,
         sink: &mut dyn BitSink,
         num_bits: usize,
@@ -24,7 +24,7 @@ impl SimpleEncodingProtocol {
         sink.write(&bools)
     }
 
-    fn write_signed(
+    pub fn write_signed(
         &self,
         sink: &mut dyn BitSink,
         num_bits: usize,

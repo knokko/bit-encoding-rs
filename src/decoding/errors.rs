@@ -115,6 +115,13 @@ impl Display for DecodeError {
     }
 }
 
+impl From<ReadError> for DecodeError {
+
+    fn from(read_error: ReadError) -> DecodeError {
+        DecodeError::Reading(read_error)
+    }
+}
+
 impl Error for DecodeError {
 
 }

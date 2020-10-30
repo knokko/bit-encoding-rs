@@ -1,7 +1,9 @@
 use crate::*;
 
+mod digit;
 mod simple;
 
+pub use digit::*;
 pub use simple::*;
 
 /// A protocol for decoding simple data types (integers, floating point numbers,

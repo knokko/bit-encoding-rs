@@ -3,6 +3,8 @@
 //! compact sequences to disk or send them over the network, attempting to use as
 //! little disk space or bandwidth as possible.
 
+#![feature(const_if_match, const_fn, const_panic)]
+
 mod decoding;
 mod encoding;
 mod sink;
