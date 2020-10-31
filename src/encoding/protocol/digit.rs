@@ -330,4 +330,17 @@ mod tests {
         test_i16_result(&ENCODER, &DECODER, -128, "01 1110 0001 1111");
         test_i16_result(&ENCODER, &DECODER, 127, "00 1010 0001 1111");
     }
+
+    #[test]
+    fn test_zero_and_one() {
+        let regular_encoder = DigitEncodingProtocol::new(3, false);
+        let regular_decoder = DigitDecodingProtocol::new(3, false);
+        let special_encoder = DigitEncodingProtocol::new(3, true);
+        let special_decoder = DigitDecodingProtocol::new(3, true);
+
+        test_u8_result(&regular_encoder, &regular_decoder, 0, "111");
+        test_u8_result(&regular_encoder, &regular_decoder, 1, "100 111");
+        test_u8_result(&special_encoder, &special_decoder, 0, "1 0");
+        test_u8_result(&special_encoder, &special_decoder, 1, "1 1");
+    }
 }
