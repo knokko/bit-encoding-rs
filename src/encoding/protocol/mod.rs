@@ -26,13 +26,13 @@ pub use simple::*;
 ///
 /// use bit_encoding::*;
 ///
-/// fn encode_some_data(encoder: &dyn EncodingProtocol, sink: &mut dyn BitSink) {
+/// fn encode_some_data(encoder: &impl EncodingProtocol, sink: &mut impl BitSink) {
 ///     encoder.write_u8(sink, 12).unwrap();
 ///     encoder.write_i32(sink, 1234).unwrap();
 ///     encoder.write_i16(sink, -6789).unwrap();
 /// }
 ///
-/// fn decode_that_data(decoder: &dyn DecodingProtocol, source: &mut dyn BitSource){
+/// fn decode_that_data(decoder: &impl DecodingProtocol, source: &mut impl BitSource){
 ///     assert_eq!(12, decoder.read_u8(source).unwrap());
 ///     assert_eq!(1234, decoder.read_i32(source).unwrap());
 ///     assert_eq!(-6789, decoder.read_i16(source).unwrap());
@@ -47,34 +47,34 @@ pub use simple::*;
 /// be careful because it might deal with user input.
 pub trait EncodingProtocol {
     /// Encodes the given u8 value and writes it to *sink*
-    fn write_u8(&self, sink: &mut dyn BitSink, value: u8) -> Result<(), WriteError>;
+    fn write_u8(&self, sink: &mut impl BitSink, value: u8) -> Result<(), WriteError>;
 
     /// Encodes the given i8 value and writes it to *sink*
-    fn write_i8(&self, sink: &mut dyn BitSink, value: i8) -> Result<(), WriteError>;
+    fn write_i8(&self, sink: &mut impl BitSink, value: i8) -> Result<(), WriteError>;
 
     /// Encodes the given u16 value and writes it to *sink*
-    fn write_u16(&self, sink: &mut dyn BitSink, value: u16) -> Result<(), WriteError>;
+    fn write_u16(&self, sink: &mut impl BitSink, value: u16) -> Result<(), WriteError>;
 
     /// Encodes the given i16 value and writes it to *sink*
-    fn write_i16(&self, sink: &mut dyn BitSink, value: i16) -> Result<(), WriteError>;
+    fn write_i16(&self, sink: &mut impl BitSink, value: i16) -> Result<(), WriteError>;
 
     /// Encoding the given u32 value and writes it to *sink*
-    fn write_u32(&self, sink: &mut dyn BitSink, value: u32) -> Result<(), WriteError>;
+    fn write_u32(&self, sink: &mut impl BitSink, value: u32) -> Result<(), WriteError>;
 
     /// Encoding the given i32 value and writes it to *sink*
-    fn write_i32(&self, sink: &mut dyn BitSink, value: i32) -> Result<(), WriteError>;
+    fn write_i32(&self, sink: &mut impl BitSink, value: i32) -> Result<(), WriteError>;
 
     /// Encodes the given u64 value and writes it to *sink*
-    fn write_u64(&self, sink: &mut dyn BitSink, value: u64) -> Result<(), WriteError>;
+    fn write_u64(&self, sink: &mut impl BitSink, value: u64) -> Result<(), WriteError>;
 
     /// Encodes the given i64 value and writes it to *sink*
-    fn write_i64(&self, sink: &mut dyn BitSink, value: i64) -> Result<(), WriteError>;
+    fn write_i64(&self, sink: &mut impl BitSink, value: i64) -> Result<(), WriteError>;
 
     /// Encodes the given u128 value and writes it to *sink*
-    fn write_u128(&self, sink: &mut dyn BitSink, value: u128) -> Result<(), WriteError>;
+    fn write_u128(&self, sink: &mut impl BitSink, value: u128) -> Result<(), WriteError>;
 
     /// Encodes the given i128 value and writes it to *sink*
-    fn write_i128(&self, sink: &mut dyn BitSink, value: i128) -> Result<(), WriteError>;
+    fn write_i128(&self, sink: &mut impl BitSink, value: i128) -> Result<(), WriteError>;
 }
 
 /*
@@ -109,7 +109,7 @@ pub(crate) mod testing {
         read_combined(&mut source, decoder).unwrap();
     }
 
-    fn write_combined(sink: &mut dyn BitSink, encoder: &dyn EncodingProtocol) -> Result<(), WriteError> {
+    fn write_combined(sink: &mut impl BitSink, encoder: &impl EncodingProtocol) -> Result<(), WriteError> {
         encoder.write_i128(sink, -123456)?;
         sink.write(&[true, false])?;
         encoder.write_i64(sink, 987654321)?;
@@ -148,7 +148,7 @@ pub(crate) mod testing {
         Ok(())
     }
 
-    fn test_u8(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u8(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         let mut sink = BoolVecBitSink::with_capacity(256 * 8);
         for value in 0..=255 {
             encoder.write_u8(&mut sink, value).unwrap();
@@ -160,7 +160,7 @@ pub(crate) mod testing {
         }
     }
 
-    fn test_i8(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i8(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         let mut sink = BoolVecBitSink::with_capacity(256 * 8);
         for value in -128..=127 {
             encoder.write_i8(&mut sink, value).unwrap();
@@ -172,7 +172,7 @@ pub(crate) mod testing {
         }
     }
 
-    fn test_u16(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u16(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         let mut sink = BoolVecBitSink::with_capacity(65536 * 16);
         for value in 0..=65535 {
             encoder.write_u16(&mut sink, value).unwrap();
@@ -184,7 +184,7 @@ pub(crate) mod testing {
         }
     }
 
-    fn test_i16(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i16(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         let mut sink = BoolVecBitSink::with_capacity(656536 * 16);
         for value in -32768..=32767 {
             encoder.write_i16(&mut sink, value).unwrap();
@@ -199,8 +199,8 @@ pub(crate) mod testing {
     const RANDOM_AMOUNT: usize = 10_000;
 
     fn test_random_symmetry<T: Copy + Eq + std::fmt::Debug>(
-        write_method: &dyn Fn(&mut dyn BitSink, T) -> Result<(), WriteError>,
-        read_method: &dyn Fn(&mut BoolSliceBitSource) -> Result<T, DecodeError>,
+        write_method: impl Fn(&mut BoolVecBitSink, T) -> Result<(), WriteError>,
+        read_method: impl Fn(&mut BoolSliceBitSource) -> Result<T, DecodeError>,
     ) where
         Standard: Distribution<T>,
     {
@@ -223,8 +223,8 @@ pub(crate) mod testing {
 
     fn test_given_symmetry<T: Copy + Eq + std::fmt::Debug>(
         values: &[T],
-        write_method: &dyn Fn(&mut dyn BitSink, T) -> Result<(), WriteError>,
-        read_method: &dyn Fn(&mut BoolSliceBitSource) -> Result<T, DecodeError>,
+        write_method: impl Fn(&mut BoolVecBitSink, T) -> Result<(), WriteError>,
+        read_method: impl Fn(&mut BoolSliceBitSource) -> Result<T, DecodeError>,
     ) {
         let mut sink = BoolVecBitSink::new();
         for value in values {
@@ -237,80 +237,80 @@ pub(crate) mod testing {
         }
     }
 
-    fn test_u32(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u32(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         test_given_symmetry(
             &[0, 1, u32::max_value()],
-            &|sink, value| encoder.write_u32(sink, value),
-            &|source| decoder.read_u32(source),
+            |sink, value| encoder.write_u32(sink, value),
+            |source| decoder.read_u32(source),
         );
 
-        test_random_symmetry(&|sink, value| encoder.write_u32(sink, value), &|source| {
+        test_random_symmetry(|sink, value| encoder.write_u32(sink, value), |source| {
             decoder.read_u32(source)
         });
     }
 
-    fn test_i32(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i32(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         test_given_symmetry(
             &[0, 1, -1, i32::max_value(), i32::min_value()],
-            &|sink, value| encoder.write_i32(sink, value),
-            &|source| decoder.read_i32(source),
+            |sink, value| encoder.write_i32(sink, value),
+            |source| decoder.read_i32(source),
         );
 
-        test_random_symmetry(&|sink, value| encoder.write_i32(sink, value), &|source| {
+        test_random_symmetry(|sink, value| encoder.write_i32(sink, value), |source| {
             decoder.read_i32(source)
         });
     }
 
-    fn test_u64(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u64(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         test_given_symmetry(
             &[0, 1, u64::max_value()],
-            &|sink, value| encoder.write_u64(sink, value),
-            &|source| decoder.read_u64(source),
+            |sink, value| encoder.write_u64(sink, value),
+            |source| decoder.read_u64(source),
         );
 
-        test_random_symmetry(&|sink, value| encoder.write_u64(sink, value), &|source| {
+        test_random_symmetry(|sink, value| encoder.write_u64(sink, value), |source| {
             decoder.read_u64(source)
         });
     }
 
-    fn test_i64(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i64(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         test_given_symmetry(
             &[0, 1, -1, i64::max_value(), i64::min_value()],
-            &|sink, value| encoder.write_i64(sink, value),
-            &|source| decoder.read_i64(source),
+            |sink, value| encoder.write_i64(sink, value),
+            |source| decoder.read_i64(source),
         );
 
-        test_random_symmetry(&|sink, value| encoder.write_i64(sink, value), &|source| {
+        test_random_symmetry(|sink, value| encoder.write_i64(sink, value), |source| {
             decoder.read_i64(source)
         });
     }
 
-    fn test_u128(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u128(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         test_given_symmetry(
             &[0, 1, u128::max_value()],
-            &|sink, value| encoder.write_u128(sink, value),
-            &|source| decoder.read_u128(source),
+            |sink, value| encoder.write_u128(sink, value),
+            |source| decoder.read_u128(source),
         );
 
-        test_random_symmetry(&|sink, value| encoder.write_u128(sink, value), &|source| {
+        test_random_symmetry(|sink, value| encoder.write_u128(sink, value), |source| {
             decoder.read_u128(source)
         });
     }
 
-    fn test_i128(encoder: &dyn EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i128(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
         test_given_symmetry(
             &[0, 1, -1, i128::max_value(), i128::min_value()],
-            &|sink, value| encoder.write_i128(sink, value),
-            &|source| decoder.read_i128(source),
+            |sink, value| encoder.write_i128(sink, value),
+            |source| decoder.read_i128(source),
         );
 
-        test_random_symmetry(&|sink, value| encoder.write_i128(sink, value), &|source| {
+        test_random_symmetry(|sink, value| encoder.write_i128(sink, value), |source| {
             decoder.read_i128(source)
         });
     }
 
     fn test_result(
-        action: &mut dyn FnMut(&mut dyn BitSink) -> Result<(), WriteError>,
+        action: &mut dyn FnMut(&mut BoolVecBitSink) -> Result<(), WriteError>,
         encoded: &str,
     ) {
         for character in encoded.chars() {
@@ -330,7 +330,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_u8_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: u8,
         encoded: &str,
@@ -340,7 +340,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_i8_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: i8,
         encoded: &str,
@@ -350,7 +350,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_u16_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: u16,
         encoded: &str,
@@ -360,7 +360,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_i16_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: i16,
         encoded: &str,
@@ -370,7 +370,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_u32_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: u32,
         encoded: &str,
@@ -380,7 +380,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_i32_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: i32,
         encoded: &str,
@@ -390,7 +390,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_u64_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: u64,
         encoded: &str,
@@ -400,7 +400,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_i64_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: i64,
         encoded: &str,
@@ -410,7 +410,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_u128_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: u128,
         encoded: &str,
@@ -420,7 +420,7 @@ pub(crate) mod testing {
     }
 
     pub fn test_i128_result(
-        encoder: &dyn EncodingProtocol,
+        encoder: &impl EncodingProtocol,
         decoder: &impl DecodingProtocol,
         value: i128,
         encoded: &str,

@@ -38,43 +38,43 @@ impl SimpleEncodingProtocol {
 }
 
 impl EncodingProtocol for SimpleEncodingProtocol {
-    fn write_u8(&self, sink: &mut dyn BitSink, value: u8) -> Result<(), WriteError> {
+    fn write_u8(&self, sink: &mut impl BitSink, value: u8) -> Result<(), WriteError> {
         self.write_unsigned(sink, 8, value as u128)
     }
 
-    fn write_i8(&self, sink: &mut dyn BitSink, value: i8) -> Result<(), WriteError> {
+    fn write_i8(&self, sink: &mut impl BitSink, value: i8) -> Result<(), WriteError> {
         self.write_signed(sink, 8, value as i128)
     }
 
-    fn write_u16(&self, sink: &mut dyn BitSink, value: u16) -> Result<(), WriteError> {
+    fn write_u16(&self, sink: &mut impl BitSink, value: u16) -> Result<(), WriteError> {
         self.write_unsigned(sink, 16, value as u128)
     }
 
-    fn write_i16(&self, sink: &mut dyn BitSink, value: i16) -> Result<(), WriteError> {
+    fn write_i16(&self, sink: &mut impl BitSink, value: i16) -> Result<(), WriteError> {
         self.write_signed(sink, 16, value as i128)
     }
 
-    fn write_u32(&self, sink: &mut dyn BitSink, value: u32) -> Result<(), WriteError> {
+    fn write_u32(&self, sink: &mut impl BitSink, value: u32) -> Result<(), WriteError> {
         self.write_unsigned(sink, 32, value as u128)
     }
 
-    fn write_i32(&self, sink: &mut dyn BitSink, value: i32) -> Result<(), WriteError> {
+    fn write_i32(&self, sink: &mut impl BitSink, value: i32) -> Result<(), WriteError> {
         self.write_signed(sink, 32, value as i128)
     }
 
-    fn write_u64(&self, sink: &mut dyn BitSink, value: u64) -> Result<(), WriteError> {
+    fn write_u64(&self, sink: &mut impl BitSink, value: u64) -> Result<(), WriteError> {
         self.write_unsigned(sink, 64, value as u128)
     }
 
-    fn write_i64(&self, sink: &mut dyn BitSink, value: i64) -> Result<(), WriteError> {
+    fn write_i64(&self, sink: &mut impl BitSink, value: i64) -> Result<(), WriteError> {
         self.write_signed(sink, 64, value as i128)
     }
 
-    fn write_u128(&self, sink: &mut dyn BitSink, value: u128) -> Result<(), WriteError> {
+    fn write_u128(&self, sink: &mut impl BitSink, value: u128) -> Result<(), WriteError> {
         self.write_unsigned(sink, 128, value)
     }
 
-    fn write_i128(&self, sink: &mut dyn BitSink, value: i128) -> Result<(), WriteError> {
+    fn write_i128(&self, sink: &mut impl BitSink, value: i128) -> Result<(), WriteError> {
         self.write_signed(sink, 128, value)
     }
 }
