@@ -54,7 +54,7 @@ impl DigitEncodingProtocol {
     }
 
     pub const fn v1() -> Self {
-        Self::new(4, true)
+        Self::new(3, true)
     }
 
     fn get_num_digit_values(&self) -> u128 {

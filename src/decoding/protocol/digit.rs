@@ -22,7 +22,7 @@ impl DigitDecodingProtocol {
     }
 
     pub const fn v1() -> Self {
-        Self::new(4, true)
+        Self::new(3, true)
     }
 
     fn read_digit_part(
