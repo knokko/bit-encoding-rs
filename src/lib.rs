@@ -70,6 +70,19 @@ pub fn bools_to_bytes(bools: &[bool]) -> Vec<u8> {
     bytes
 }
 
+pub fn bytes_to_bools(bytes: &[u8]) -> Vec<bool> {
+    let num_bools = bytes.len() * 8;
+    let mut bools = Vec::with_capacity(num_bools);
+
+    for byte in bytes {
+        for bit_index in 0..8 {
+            bools.push(byte & (1 << bit_index) != 0);
+        }
+    }
+
+    bools
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -97,6 +110,35 @@ mod tests {
             bools_to_bytes(&[F, T, F, T, F, T, F, T, T, F, T, F, T, F, T, F])
         );
     }
+
+    #[test]
+    fn test_bytes_to_bools() {
+        assert_eq!(Vec::<bool>::new(), bytes_to_bools(&[]));
+        assert_eq!(vec![F,F,F,F, F,F,F,F], bytes_to_bools(&[0]));
+
+        assert_eq!(vec![T, T, T, F, F, T, F, F], bytes_to_bools(&[39]));
+
+        assert_eq!(
+            vec![T, T, T, T, T, T, T, T, F, F, F, F, F, F, F, F],
+            bytes_to_bools(&[255, 0])
+        );
+        assert_eq!(
+            vec![F, T, F, T, F, T, F, T, T, F, T, F, T, F, T, F],
+            bytes_to_bools(&[170, 85])
+        );
+    }
+
+    #[test]
+    fn test_bytes_to_bools_to_bytes() {
+        for first in 0..=255 {
+            for second in 0..50 {
+                let as_bools = bytes_to_bools(&[first, second]);
+                let as_bytes = bools_to_bytes(&as_bools);
+                assert_eq!(first, as_bytes[0]);
+                assert_eq!(second, as_bytes[1]);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -107,18 +149,19 @@ mod playground {
     use std::time::Instant;
 
     fn test_performance(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
-        let mut sink = BoolVecBitSink::with_capacity(10_000_000);
+        let mut sink = U8VecBitSink::with_capacity(10_000_000);
         let start_time = Instant::now();
-        let amount = 20_000;
+        let amount = 80_000;
         for counter in 0 .. amount {
             encoder.write_u32(&mut sink, counter).unwrap();
         }
         let end_time = Instant::now();
 
         let duration = end_time - start_time;
-        println!("Encoding took {:?} and final length is {}", duration, sink.get_bits().len());
+        let final_bits = sink.get_bits();
+        println!("Encoding took {:?} and final length is {}", duration, final_bits.len());
 
-        let mut source = BoolSliceBitSource::new(sink.get_bits());
+        let mut source = BoolSliceBitSource::new(&final_bits);
         let start_time = Instant::now();
         for counter in 0 .. amount {
             assert_eq!(counter, decoder.read_u32(&mut source).unwrap());
