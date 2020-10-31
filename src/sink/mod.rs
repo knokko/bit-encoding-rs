@@ -3,10 +3,12 @@ mod errors;
 
 // Implementations
 mod bool_vec;
+mod u8_vec;
 mod void;
 
 // Export all as part of this module
 pub use bool_vec::*;
+pub use u8_vec::*;
 pub use errors::*;
 pub use void::*;
 
