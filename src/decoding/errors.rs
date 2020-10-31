@@ -49,7 +49,7 @@ pub enum DecodeError {
     /// This error indicates that an implementation-specific error occurred
     /// while decoding the data. This normally indicates a corrupted *BitSource*
     /// or a programming error.
-    Other(Box<dyn Error>)
+    Other(Box<dyn Error>),
 }
 
 /// This indicates that some maximum length was exceeded during decoding
@@ -82,46 +82,60 @@ impl LengthExceeded {
 }
 
 impl Display for DecodeError {
-
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(),std::fmt::Error> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
         match self {
-            DecodeError::BigVecLength(length) => write!(f, 
-            "The decoder was asked to decode a Vec, but the length of the vector
+            DecodeError::BigVecLength(length) => write!(
+                f,
+                "The decoder was asked to decode a Vec, but the length of the vector
             appears to be {}, which is bigger than the maximum allowed length of
-            {}.", length.read_length, length.max_length),
+            {}.",
+                length.read_length, length.max_length
+            ),
 
-            DecodeError::BigStringLength(length) => write!(f,
-            "The decoder was asked to decode a String, but the length of the
+            DecodeError::BigStringLength(length) => write!(
+                f,
+                "The decoder was asked to decode a String, but the length of the
             string appears to be {}, which is bigger than the maximum allowed
-            length of {}. ", length.read_length, length.max_length),
+            length of {}. ",
+                length.read_length, length.max_length
+            ),
 
-            DecodeError::VecLengthOverflow{length} => write!(f,
-            "The decoder was asked to decode a Vec, but the length of the vector
+            DecodeError::VecLengthOverflow { length } => write!(
+                f,
+                "The decoder was asked to decode a Vec, but the length of the vector
             appears to be {}, which is bigger than the maximum value of the usize
-            on this machine {}. ", length, usize::max_value()),
+            on this machine {}. ",
+                length,
+                usize::max_value()
+            ),
 
-            DecodeError::StringLengthOverflow{length} => write!(f,
-            "The decoder was asked to decode a String, but the length of the
+            DecodeError::StringLengthOverflow { length } => write!(
+                f,
+                "The decoder was asked to decode a String, but the length of the
             string appears to be {}, which is bigger than the maximum value of the
-            usize on this machine {}. ", length, usize::max_value()),
+            usize on this machine {}. ",
+                length,
+                usize::max_value()
+            ),
 
-            DecodeError::Reading(read_error) => write!(f,
-            "The following error occurred inside the BitSource the decoder was
-            reading from: {}", read_error),
+            DecodeError::Reading(read_error) => write!(
+                f,
+                "The following error occurred inside the BitSource the decoder was
+            reading from: {}",
+                read_error
+            ),
 
-            DecodeError::Other(error) => write!(f,
-            "An implementation specific error occurred: {}", error)
+            DecodeError::Other(error) => {
+                write!(f, "An implementation specific error occurred: {}", error)
+            }
         }
     }
 }
 
 impl From<ReadError> for DecodeError {
-
     fn from(read_error: ReadError) -> DecodeError {
         DecodeError::Reading(read_error)
     }
 }
 
-impl Error for DecodeError {
-
-}
+impl Error for DecodeError {}

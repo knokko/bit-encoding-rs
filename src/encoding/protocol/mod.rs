@@ -109,7 +109,10 @@ pub(crate) mod testing {
         read_combined(&mut source, decoder).unwrap();
     }
 
-    fn write_combined(sink: &mut impl BitSink, encoder: &impl EncodingProtocol) -> Result<(), WriteError> {
+    fn write_combined(
+        sink: &mut impl BitSink,
+        encoder: &impl EncodingProtocol,
+    ) -> Result<(), WriteError> {
         encoder.write_i128(sink, -123456)?;
         sink.write(&[true, false])?;
         encoder.write_i64(sink, 987654321)?;
@@ -126,7 +129,10 @@ pub(crate) mod testing {
         Ok(())
     }
 
-    fn read_combined(source: &mut impl BitSource, decoder: &impl DecodingProtocol) -> Result<(), DecodeError> {
+    fn read_combined(
+        source: &mut impl BitSource,
+        decoder: &impl DecodingProtocol,
+    ) -> Result<(), DecodeError> {
         assert_eq!(-123456, decoder.read_i128(source)?);
         let mut dest = [false; 2];
         source.read(&mut dest).unwrap();
@@ -244,9 +250,10 @@ pub(crate) mod testing {
             |source| decoder.read_u32(source),
         );
 
-        test_random_symmetry(|sink, value| encoder.write_u32(sink, value), |source| {
-            decoder.read_u32(source)
-        });
+        test_random_symmetry(
+            |sink, value| encoder.write_u32(sink, value),
+            |source| decoder.read_u32(source),
+        );
     }
 
     fn test_i32(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
@@ -256,9 +263,10 @@ pub(crate) mod testing {
             |source| decoder.read_i32(source),
         );
 
-        test_random_symmetry(|sink, value| encoder.write_i32(sink, value), |source| {
-            decoder.read_i32(source)
-        });
+        test_random_symmetry(
+            |sink, value| encoder.write_i32(sink, value),
+            |source| decoder.read_i32(source),
+        );
     }
 
     fn test_u64(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
@@ -268,9 +276,10 @@ pub(crate) mod testing {
             |source| decoder.read_u64(source),
         );
 
-        test_random_symmetry(|sink, value| encoder.write_u64(sink, value), |source| {
-            decoder.read_u64(source)
-        });
+        test_random_symmetry(
+            |sink, value| encoder.write_u64(sink, value),
+            |source| decoder.read_u64(source),
+        );
     }
 
     fn test_i64(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
@@ -280,9 +289,10 @@ pub(crate) mod testing {
             |source| decoder.read_i64(source),
         );
 
-        test_random_symmetry(|sink, value| encoder.write_i64(sink, value), |source| {
-            decoder.read_i64(source)
-        });
+        test_random_symmetry(
+            |sink, value| encoder.write_i64(sink, value),
+            |source| decoder.read_i64(source),
+        );
     }
 
     fn test_u128(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
@@ -292,9 +302,10 @@ pub(crate) mod testing {
             |source| decoder.read_u128(source),
         );
 
-        test_random_symmetry(|sink, value| encoder.write_u128(sink, value), |source| {
-            decoder.read_u128(source)
-        });
+        test_random_symmetry(
+            |sink, value| encoder.write_u128(sink, value),
+            |source| decoder.read_u128(source),
+        );
     }
 
     fn test_i128(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
@@ -304,9 +315,10 @@ pub(crate) mod testing {
             |source| decoder.read_i128(source),
         );
 
-        test_random_symmetry(|sink, value| encoder.write_i128(sink, value), |source| {
-            decoder.read_i128(source)
-        });
+        test_random_symmetry(
+            |sink, value| encoder.write_i128(sink, value),
+            |source| decoder.read_i128(source),
+        );
     }
 
     fn test_result(

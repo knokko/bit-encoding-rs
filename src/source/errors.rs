@@ -24,17 +24,21 @@ pub enum ReadError {
 }
 
 impl std::fmt::Display for ReadError {
-
     fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
         match self {
+            ReadError::ReachedEnd { read_bools } => write!(
+                f,
+                "The decoder attempted to read more bits from the BitSource than it
+            has. Only {} bits were read successfully.",
+                read_bools
+            ),
 
-            ReadError::ReachedEnd{read_bools} => write!(f,
-            "The decoder attempted to read more bits from the BitSource than it
-            has. Only {} bits were read successfully.", read_bools),
-
-            ReadError::Other(error) => write!(f,
-            "The following error occurred while attempting to read from the
-            BitSource: {}", error)
+            ReadError::Other(error) => write!(
+                f,
+                "The following error occurred while attempting to read from the
+            BitSource: {}",
+                error
+            ),
         }
     }
 }

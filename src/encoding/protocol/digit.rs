@@ -7,7 +7,7 @@ pub(crate) const fn get_num_digit_values(digit_size: u8) -> u128 {
 const fn compute_num_digits(digit_size: u8, max_bits: u8) -> u8 {
     let mut value = match max_bits == 128 {
         true => u128::max_value(),
-        false => 1 << max_bits
+        false => 1 << max_bits,
     };
     let num_digit_values = get_num_digit_values(digit_size);
     let mut counter = 0;
@@ -18,7 +18,7 @@ const fn compute_num_digits(digit_size: u8, max_bits: u8) -> u8 {
     counter
 }
 
-const RELEVANT_NUM_DIGITS: [u8; 10] = [7,8, 15,16, 31,32, 63,64, 127,128];
+const RELEVANT_NUM_DIGITS: [u8; 10] = [7, 8, 15, 16, 31, 32, 63, 64, 127, 128];
 
 pub(crate) const fn compute_relevant_num_digits(digit_size: u8) -> [u8; 10] {
     let mut result = [0; RELEVANT_NUM_DIGITS.len()];
@@ -33,15 +33,13 @@ pub(crate) const fn compute_relevant_num_digits(digit_size: u8) -> [u8; 10] {
 }
 
 pub struct DigitEncodingProtocol {
-
     digit_size: u8,
     short_zero_and_one: bool,
 
-    max_num_digits: [u8; 10]
+    max_num_digits: [u8; 10],
 }
 
 impl DigitEncodingProtocol {
-
     pub const fn new(digit_size: u8, short_zero_and_one: bool) -> Self {
         if digit_size < 2 || digit_size > 127 {
             // The commented line won't compile, at least for now
@@ -51,7 +49,7 @@ impl DigitEncodingProtocol {
         Self {
             digit_size,
             short_zero_and_one,
-            max_num_digits: compute_relevant_num_digits(digit_size)
+            max_num_digits: compute_relevant_num_digits(digit_size),
         }
     }
 
@@ -63,8 +61,13 @@ impl DigitEncodingProtocol {
         (1u128 << self.digit_size) - 1
     }
 
-    fn write_digit_part(&self, sink: &mut dyn BitSink, mut value: u128, max_num_digits: u8) -> Result<(), WriteError> {
-        let simple_encoder = SimpleEncodingProtocol::new(); 
+    fn write_digit_part(
+        &self,
+        sink: &mut dyn BitSink,
+        mut value: u128,
+        max_num_digits: u8,
+    ) -> Result<(), WriteError> {
+        let simple_encoder = SimpleEncodingProtocol::new();
         let num_digit_values = self.get_num_digit_values();
         let mut num_digits = 0;
         while value > 0 {
@@ -82,12 +85,17 @@ impl DigitEncodingProtocol {
         }
     }
 
-    fn write_unsigned(&self, sink: &mut dyn BitSink, mut value: u128, max_num_digits: u8) -> Result<(), WriteError> {
+    fn write_unsigned(
+        &self,
+        sink: &mut dyn BitSink,
+        mut value: u128,
+        max_num_digits: u8,
+    ) -> Result<(), WriteError> {
         if self.short_zero_and_one {
             if value == 0 {
-                return sink.write(&[true, false])
+                return sink.write(&[true, false]);
             } else if value == 1 {
-                return sink.write(&[true, true])
+                return sink.write(&[true, true]);
             } else {
                 sink.write(&[false])?;
                 value -= 2;
@@ -97,13 +105,17 @@ impl DigitEncodingProtocol {
         self.write_digit_part(sink, value, max_num_digits)
     }
 
-    fn write_signed(&self, sink: &mut dyn BitSink, mut value: i128, max_num_digits: u8) -> Result<(), WriteError> {
-
+    fn write_signed(
+        &self,
+        sink: &mut dyn BitSink,
+        mut value: i128,
+        max_num_digits: u8,
+    ) -> Result<(), WriteError> {
         if self.short_zero_and_one {
             if value == 0 {
-                return sink.write(&[true, false])
+                return sink.write(&[true, false]);
             } else if value == 1 {
-                return sink.write(&[true, true])
+                return sink.write(&[true, true]);
             } else {
                 sink.write(&[false])?;
                 if value >= 0 {
@@ -125,7 +137,6 @@ impl DigitEncodingProtocol {
 }
 
 impl EncodingProtocol for DigitEncodingProtocol {
-
     fn write_u8(&self, sink: &mut impl BitSink, value: u8) -> Result<(), WriteError> {
         self.write_unsigned(sink, value as u128, self.max_num_digits[1])
     }
@@ -181,9 +192,18 @@ mod tests {
     fn test_symmetry() {
         test_encoding_pair(&ENCODER, &DECODER);
         // Test a few other combinations as well
-        test_encoding_pair(&DigitEncodingProtocol::new(2, false), &DigitDecodingProtocol::new(2, false));
-        test_encoding_pair(&DigitEncodingProtocol::new(3, true), &DigitDecodingProtocol::new(3, true));
-        test_encoding_pair(&DigitEncodingProtocol::new(7, false), &DigitDecodingProtocol::new(7, false));
+        test_encoding_pair(
+            &DigitEncodingProtocol::new(2, false),
+            &DigitDecodingProtocol::new(2, false),
+        );
+        test_encoding_pair(
+            &DigitEncodingProtocol::new(3, true),
+            &DigitDecodingProtocol::new(3, true),
+        );
+        test_encoding_pair(
+            &DigitEncodingProtocol::new(7, false),
+            &DigitDecodingProtocol::new(7, false),
+        );
     }
 
     #[test]
