@@ -26,13 +26,13 @@ pub use simple::*;
 ///
 /// use bit_encoding::*;
 ///
-/// fn encode_some_data(encoder: &dyn EncodingProtocol, sink: &mut dyn BitSink) {
+/// fn encode_some_data(encoder: &impl EncodingProtocol, sink: &mut impl BitSink) {
 ///     encoder.write_u8(sink, 12).unwrap();
 ///     encoder.write_i32(sink, 1234).unwrap();
 ///     encoder.write_i16(sink, -6789).unwrap();
 /// }
 ///
-/// fn decode_that_data(decoder: &dyn DecodingProtocol, source: &mut dyn BitSource){
+/// fn decode_that_data(decoder: &impl DecodingProtocol, source: &mut impl BitSource){
 ///     assert_eq!(12, decoder.read_u8(source).unwrap());
 ///     assert_eq!(1234, decoder.read_i32(source).unwrap());
 ///     assert_eq!(-6789, decoder.read_i16(source).unwrap());

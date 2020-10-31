@@ -98,3 +98,40 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+mod playground {
+
+    use crate::*;
+
+    use std::time::Instant;
+
+    fn test_performance(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+        let mut sink = BoolVecBitSink::with_capacity(10_000_000);
+        let start_time = Instant::now();
+        let amount = 20_000;
+        for counter in 0 .. amount {
+            encoder.write_u32(&mut sink, counter).unwrap();
+        }
+        let end_time = Instant::now();
+
+        let duration = end_time - start_time;
+        println!("Encoding took {:?} and final length is {}", duration, sink.get_bits().len());
+
+        let mut source = BoolSliceBitSource::new(sink.get_bits());
+        let start_time = Instant::now();
+        for counter in 0 .. amount {
+            assert_eq!(counter, decoder.read_u32(&mut source).unwrap());
+        }
+        let end_time = Instant::now();
+        let duration = end_time - start_time;
+        println!("Decoding took {:?}", duration);
+    }
+
+    #[test]
+    fn test_simple_performance() {
+        //test_performance(&SimpleEncodingProtocol::new(), &SimpleDecodingProtocol::new());
+        test_performance(&DigitEncodingProtocol::new(4, false), &DigitDecodingProtocol::new(4, false));
+        //test_performance(&DigitEncodingProtocol::new(3, false), &DigitDecodingProtocol::new(3, false));
+    }
+}

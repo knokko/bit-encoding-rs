@@ -185,8 +185,8 @@ mod tests {
 
     use crate::encoding::protocol::testing::*;
 
-    const ENCODER: DigitEncodingProtocol = DigitEncodingProtocol::v1();
-    const DECODER: DigitDecodingProtocol = DigitDecodingProtocol::v1();
+    const ENCODER: DigitEncodingProtocol = DigitEncodingProtocol::new(4, true);
+    const DECODER: DigitDecodingProtocol = DigitDecodingProtocol::new(4, true);
 
     #[test]
     fn test_symmetry() {

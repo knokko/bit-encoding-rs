@@ -202,7 +202,7 @@ pub(crate) mod testing {
         }
     }
 
-    const RANDOM_AMOUNT: usize = 10_000;
+    const RANDOM_AMOUNT: usize = 1_000;
 
     fn test_random_symmetry<T: Copy + Eq + std::fmt::Debug>(
         write_method: impl Fn(&mut BoolVecBitSink, T) -> Result<(), WriteError>,
