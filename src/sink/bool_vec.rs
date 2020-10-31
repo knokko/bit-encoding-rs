@@ -45,6 +45,18 @@ impl BoolVecBitSink {
     pub fn to_bytes(&self) -> Vec<u8> {
         bools_to_bytes(&self.vec)
     }
+
+    pub fn create_bit_string(&self) -> String {
+        let mut result = String::with_capacity(self.vec.len());
+        for bit in &self.vec {
+            if *bit {
+                result += "1";
+            } else {
+                result += "0";
+            }
+        }
+        result
+    }
 }
 
 impl BitSink for BoolVecBitSink {
