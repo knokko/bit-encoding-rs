@@ -92,43 +92,43 @@ impl DigitDecodingProtocol {
 
 impl DecodingProtocol for DigitDecodingProtocol {
 
-    fn read_u8(&self, source: &mut dyn BitSource) -> Result<u8, DecodeError> {
+    fn read_u8(&self, source: &mut impl BitSource) -> Result<u8, DecodeError> {
         self.read_unsigned(source, self.max_num_digits[1]).map(|x| x as u8)
     }
 
-    fn read_i8(&self, source: &mut dyn BitSource) -> Result<i8, DecodeError> {
+    fn read_i8(&self, source: &mut impl BitSource) -> Result<i8, DecodeError> {
         self.read_signed(source, self.max_num_digits[0]).map(|x| x as i8)
     }
 
-    fn read_u16(&self, source: &mut dyn BitSource) -> Result<u16, DecodeError> {
+    fn read_u16(&self, source: &mut impl BitSource) -> Result<u16, DecodeError> {
         self.read_unsigned(source, self.max_num_digits[3]).map(|x| x as u16)
     }
 
-    fn read_i16(&self, source: &mut dyn BitSource) -> Result<i16, DecodeError> {
+    fn read_i16(&self, source: &mut impl BitSource) -> Result<i16, DecodeError> {
         self.read_signed(source, self.max_num_digits[2]).map(|x| x as i16)
     }
 
-    fn read_u32(&self, source: &mut dyn BitSource) -> Result<u32, DecodeError> {
+    fn read_u32(&self, source: &mut impl BitSource) -> Result<u32, DecodeError> {
         self.read_unsigned(source, self.max_num_digits[5]).map(|x| x as u32)
     }
 
-    fn read_i32(&self, source: &mut dyn BitSource) -> Result<i32, DecodeError> {
+    fn read_i32(&self, source: &mut impl BitSource) -> Result<i32, DecodeError> {
         self.read_signed(source, self.max_num_digits[4]).map(|x| x as i32)
     }
 
-    fn read_u64(&self, source: &mut dyn BitSource) -> Result<u64, DecodeError> {
+    fn read_u64(&self, source: &mut impl BitSource) -> Result<u64, DecodeError> {
         self.read_unsigned(source, self.max_num_digits[7]).map(|x| x as u64)
     }
 
-    fn read_i64(&self, source: &mut dyn BitSource) -> Result<i64, DecodeError> {
+    fn read_i64(&self, source: &mut impl BitSource) -> Result<i64, DecodeError> {
         self.read_signed(source, self.max_num_digits[6]).map(|x| x as i64)
     }
 
-    fn read_u128(&self, source: &mut dyn BitSource) -> Result<u128, DecodeError> {
+    fn read_u128(&self, source: &mut impl BitSource) -> Result<u128, DecodeError> {
         self.read_unsigned(source, self.max_num_digits[9])
     }
 
-    fn read_i128(&self, source: &mut dyn BitSource) -> Result<i128, DecodeError> {
+    fn read_i128(&self, source: &mut impl BitSource) -> Result<i128, DecodeError> {
         self.read_signed(source, self.max_num_digits[8])
     }
 }
