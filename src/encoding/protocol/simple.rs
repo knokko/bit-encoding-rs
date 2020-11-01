@@ -1,7 +1,5 @@
 use crate::*;
 
-use std::ops::*;
-
 /// The simple implementation of *DecodingProtocol*. This implementation will
 /// not try to encode any data type compactly, but rather use a simple encoding
 /// based on their binary representation. The corresponding decoding protocol is
@@ -25,10 +23,6 @@ impl SimpleEncodingProtocol {
         }
         sink.write(&bools[0..num_bits])
     }
-
-    // pub fn write_unsigned<U>(&self, sink: &mut impl BitSink, mut value: U) {
-
-    // }
 
     pub fn write_signed(
         &self,
