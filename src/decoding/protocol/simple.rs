@@ -1,14 +1,19 @@
 use crate::*;
 
-/// The simple implementation of *EncodingProtocol*. This implementation will
-/// not try to encode any data type compactly, but rather use a simple encoding
-/// based on their binary representation. The corresponding encoding protocol is
-/// *SimpleEncodingProtocol*.
-pub struct SimpleDecodingProtocol {}
+/// The simple implementation of *IntEncodingProtocol*. This implementation will
+/// simply decode integers back from their binary representation (but always the
+/// least significant bits first).
+/// 
+/// This implementation is ideal when every possible integer has an equal chance
+/// to be stored, but not so great when some integers (for instance the small
+/// integers) are much more common than the other integers.
+/// 
+/// The corresponding encoding protocol is *SimpleIntEncodingProtocol*.
+pub struct SimpleIntDecodingProtocol {}
 
-impl SimpleDecodingProtocol {
+impl SimpleIntDecodingProtocol {
     pub const fn new() -> Self {
-        Self {}
+        SimpleIntDecodingProtocol {}
     }
 
     pub fn read_unsigned(
@@ -45,7 +50,7 @@ impl SimpleDecodingProtocol {
     }
 }
 
-impl DecodingProtocol for SimpleDecodingProtocol {
+impl IntDecodingProtocol for SimpleIntDecodingProtocol {
     fn read_u8(&self, source: &mut impl BitSource) -> Result<u8, DecodeError> {
         self.read_unsigned(source, 8).map(|x| x as u8)
     }

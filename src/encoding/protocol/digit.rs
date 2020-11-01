@@ -32,21 +32,21 @@ pub(crate) const fn compute_relevant_num_digits(digit_size: u8) -> [u8; 10] {
     result
 }
 
-pub struct DigitEncodingProtocol {
+pub struct DigitIntEncodingProtocol {
     digit_size: u8,
     short_zero_and_one: bool,
 
     max_num_digits: [u8; 10],
 }
 
-impl DigitEncodingProtocol {
+impl DigitIntEncodingProtocol {
     pub const fn new(digit_size: u8, short_zero_and_one: bool) -> Self {
         if digit_size < 2 || digit_size > 127 {
             // The commented line won't compile, at least for now
             //panic!("Invalid digit size: {}", digit_size);
             panic!("Invalid digit size");
         }
-        Self {
+        DigitIntEncodingProtocol {
             digit_size,
             short_zero_and_one,
             max_num_digits: compute_relevant_num_digits(digit_size),
@@ -67,7 +67,7 @@ impl DigitEncodingProtocol {
         mut value: u128,
         max_num_digits: u8,
     ) -> Result<(), WriteError> {
-        let simple_encoder = SimpleEncodingProtocol::new();
+        let simple_encoder = SimpleIntEncodingProtocol::new();
         let num_digit_values = self.get_num_digit_values();
         let mut num_digits = 0;
         while value > 0 {
@@ -136,7 +136,7 @@ impl DigitEncodingProtocol {
     }
 }
 
-impl EncodingProtocol for DigitEncodingProtocol {
+impl IntEncodingProtocol for DigitIntEncodingProtocol {
     fn write_u8(&self, sink: &mut impl BitSink, value: u8) -> Result<(), WriteError> {
         self.write_unsigned(sink, value as u128, self.max_num_digits[1])
     }
@@ -185,24 +185,24 @@ mod tests {
 
     use crate::encoding::protocol::testing::*;
 
-    const ENCODER: DigitEncodingProtocol = DigitEncodingProtocol::new(4, true);
-    const DECODER: DigitDecodingProtocol = DigitDecodingProtocol::new(4, true);
+    const ENCODER: DigitIntEncodingProtocol = DigitIntEncodingProtocol::new(4, true);
+    const DECODER: DigitIntDecodingProtocol = DigitIntDecodingProtocol::new(4, true);
 
     #[test]
     fn test_symmetry() {
         test_encoding_pair(&ENCODER, &DECODER);
         // Test a few other combinations as well
         test_encoding_pair(
-            &DigitEncodingProtocol::new(2, false),
-            &DigitDecodingProtocol::new(2, false),
+            &DigitIntEncodingProtocol::new(2, false),
+            &DigitIntDecodingProtocol::new(2, false),
         );
         test_encoding_pair(
-            &DigitEncodingProtocol::new(3, true),
-            &DigitDecodingProtocol::new(3, true),
+            &DigitIntEncodingProtocol::new(3, true),
+            &DigitIntDecodingProtocol::new(3, true),
         );
         test_encoding_pair(
-            &DigitEncodingProtocol::new(7, false),
-            &DigitDecodingProtocol::new(7, false),
+            &DigitIntEncodingProtocol::new(7, false),
+            &DigitIntDecodingProtocol::new(7, false),
         );
     }
 
@@ -353,10 +353,10 @@ mod tests {
 
     #[test]
     fn test_zero_and_one() {
-        let regular_encoder = DigitEncodingProtocol::new(3, false);
-        let regular_decoder = DigitDecodingProtocol::new(3, false);
-        let special_encoder = DigitEncodingProtocol::new(3, true);
-        let special_decoder = DigitDecodingProtocol::new(3, true);
+        let regular_encoder = DigitIntEncodingProtocol::new(3, false);
+        let regular_decoder = DigitIntDecodingProtocol::new(3, false);
+        let special_encoder = DigitIntEncodingProtocol::new(3, true);
+        let special_decoder = DigitIntDecodingProtocol::new(3, true);
 
         test_u8_result(&regular_encoder, &regular_decoder, 0, "111");
         test_u8_result(&regular_encoder, &regular_decoder, 1, "100 111");

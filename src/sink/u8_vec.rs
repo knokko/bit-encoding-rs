@@ -78,7 +78,7 @@ mod tests {
 
     #[test]
     fn digit_test() {
-        let encoder = DigitEncodingProtocol::v1();
+        let encoder = DigitIntEncodingProtocol::v1();
         let mut sink = U8VecBitSink::new();
 
         // Encode some numbers
@@ -88,7 +88,7 @@ mod tests {
 
         let as_bools = bytes_to_bools(&sink.bytes);
         let mut source = BoolSliceBitSource::new(&as_bools);
-        let decoder = DigitDecodingProtocol::v1();
+        let decoder = DigitIntDecodingProtocol::v1();
 
         // Decode the same numbers
         for counter in 0..100 {

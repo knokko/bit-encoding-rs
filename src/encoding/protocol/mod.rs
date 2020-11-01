@@ -6,33 +6,32 @@ mod simple;
 pub use digit::*;
 pub use simple::*;
 
-/// A protocol for encoding simple data types (integers, floating point numbers,
-/// strings...) into a *BitSink*. Every implementation of this trait should have
-/// a corresponding *DecodingProtocol* that can decode the data types that were
-/// encoded by this encoder.
+/// A protocol for encoding primitive integers into a *BitSink*. Every 
+/// implementation of this trait should have a corresponding *IntDecodingProtocol* 
+/// that can decode the data types that were encoded by this encoder.
 ///
-/// A simple implementation of *EncodingProtocol* would for instance encode
+/// A simple implementation of *IntEncodingProtocol* would for instance encode
 /// integers using their binary representation (writing 32 bools to encode
-/// a u32 value). In fact, this is what *SimpleEncodingProtocol* does.
+/// a u32 value). In fact, this is what *SimpleIntEncodingProtocol* does.
 ///
 /// Such a simple implementation is perfect when every value has the same chance
 /// to be stored. However, smaller values are often more common, so a more clever
 /// protocol would exploit this by using lesser bools to store smaller numbers.
 ///
-/// When you have a corresponding pair of *EncodingProtocol* and
-/// *DecodingProtocol*, you can use them like this:
+/// When you have a corresponding pair of *IntEncodingProtocol* and
+/// *IntDecodingProtocol*, you can use them like this:
 ///
 /// ```
 ///
 /// use bit_encoding::*;
 ///
-/// fn encode_some_data(encoder: &impl EncodingProtocol, sink: &mut impl BitSink) {
+/// fn encode_some_data(encoder: &impl IntEncodingProtocol, sink: &mut impl BitSink) {
 ///     encoder.write_u8(sink, 12).unwrap();
 ///     encoder.write_i32(sink, 1234).unwrap();
 ///     encoder.write_i16(sink, -6789).unwrap();
 /// }
 ///
-/// fn decode_that_data(decoder: &impl DecodingProtocol, source: &mut impl BitSource){
+/// fn decode_that_data(decoder: &impl IntDecodingProtocol, source: &mut impl BitSource){
 ///     assert_eq!(12, decoder.read_u8(source).unwrap());
 ///     assert_eq!(1234, decoder.read_i32(source).unwrap());
 ///     assert_eq!(-6789, decoder.read_i16(source).unwrap());
@@ -45,7 +44,7 @@ pub use simple::*;
 /// because implementations of *BitSource* and *BitSink* can be backed by IO
 /// operations, which could fail. Furthermore, the *DecodingProtocol* has to
 /// be careful because it might deal with user input.
-pub trait EncodingProtocol {
+pub trait IntEncodingProtocol {
     /// Encodes the given u8 value and writes it to *sink*
     fn write_u8(&self, sink: &mut impl BitSink, value: u8) -> Result<(), WriteError>;
 
@@ -77,10 +76,6 @@ pub trait EncodingProtocol {
     fn write_i128(&self, sink: &mut impl BitSink, value: i128) -> Result<(), WriteError>;
 }
 
-/*
- * For some reason, I get dead code warnings for all methods in the testing module
- * unless I allow it like here.
- */
 #[cfg(test)]
 pub(crate) mod testing {
 
@@ -89,7 +84,7 @@ pub(crate) mod testing {
     use rand::distributions::Standard;
     use rand::prelude::*;
 
-    pub fn test_encoding_pair(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    pub fn test_encoding_pair(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         test_u8(encoder, decoder);
         test_i8(encoder, decoder);
         test_u16(encoder, decoder);
@@ -111,7 +106,7 @@ pub(crate) mod testing {
 
     fn write_combined(
         sink: &mut impl BitSink,
-        encoder: &impl EncodingProtocol,
+        encoder: &impl IntEncodingProtocol,
     ) -> Result<(), WriteError> {
         encoder.write_i128(sink, -123456)?;
         sink.write(&[true, false])?;
@@ -131,7 +126,7 @@ pub(crate) mod testing {
 
     fn read_combined(
         source: &mut impl BitSource,
-        decoder: &impl DecodingProtocol,
+        decoder: &impl IntDecodingProtocol,
     ) -> Result<(), DecodeError> {
         assert_eq!(-123456, decoder.read_i128(source)?);
         let mut dest = [false; 2];
@@ -154,7 +149,7 @@ pub(crate) mod testing {
         Ok(())
     }
 
-    fn test_u8(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u8(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         let mut sink = BoolVecBitSink::with_capacity(256 * 8);
         for value in 0..=255 {
             encoder.write_u8(&mut sink, value).unwrap();
@@ -166,7 +161,7 @@ pub(crate) mod testing {
         }
     }
 
-    fn test_i8(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i8(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         let mut sink = BoolVecBitSink::with_capacity(256 * 8);
         for value in -128..=127 {
             encoder.write_i8(&mut sink, value).unwrap();
@@ -178,7 +173,7 @@ pub(crate) mod testing {
         }
     }
 
-    fn test_u16(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u16(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         let mut sink = BoolVecBitSink::with_capacity(65536 * 16);
         for value in 0..=65535 {
             encoder.write_u16(&mut sink, value).unwrap();
@@ -190,7 +185,7 @@ pub(crate) mod testing {
         }
     }
 
-    fn test_i16(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i16(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         let mut sink = BoolVecBitSink::with_capacity(656536 * 16);
         for value in -32768..=32767 {
             encoder.write_i16(&mut sink, value).unwrap();
@@ -243,7 +238,7 @@ pub(crate) mod testing {
         }
     }
 
-    fn test_u32(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u32(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         test_given_symmetry(
             &[0, 1, u32::max_value()],
             |sink, value| encoder.write_u32(sink, value),
@@ -256,7 +251,7 @@ pub(crate) mod testing {
         );
     }
 
-    fn test_i32(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i32(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         test_given_symmetry(
             &[0, 1, -1, i32::max_value(), i32::min_value()],
             |sink, value| encoder.write_i32(sink, value),
@@ -269,7 +264,7 @@ pub(crate) mod testing {
         );
     }
 
-    fn test_u64(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u64(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         test_given_symmetry(
             &[0, 1, u64::max_value()],
             |sink, value| encoder.write_u64(sink, value),
@@ -282,7 +277,7 @@ pub(crate) mod testing {
         );
     }
 
-    fn test_i64(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i64(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         test_given_symmetry(
             &[0, 1, -1, i64::max_value(), i64::min_value()],
             |sink, value| encoder.write_i64(sink, value),
@@ -295,7 +290,7 @@ pub(crate) mod testing {
         );
     }
 
-    fn test_u128(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_u128(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         test_given_symmetry(
             &[0, 1, u128::max_value()],
             |sink, value| encoder.write_u128(sink, value),
@@ -308,7 +303,7 @@ pub(crate) mod testing {
         );
     }
 
-    fn test_i128(encoder: &impl EncodingProtocol, decoder: &impl DecodingProtocol) {
+    fn test_i128(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
         test_given_symmetry(
             &[0, 1, -1, i128::max_value(), i128::min_value()],
             |sink, value| encoder.write_i128(sink, value),
@@ -342,8 +337,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_u8_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: u8,
         encoded: &str,
     ) {
@@ -352,8 +347,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_i8_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: i8,
         encoded: &str,
     ) {
@@ -362,8 +357,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_u16_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: u16,
         encoded: &str,
     ) {
@@ -372,8 +367,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_i16_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: i16,
         encoded: &str,
     ) {
@@ -382,8 +377,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_u32_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: u32,
         encoded: &str,
     ) {
@@ -392,8 +387,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_i32_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: i32,
         encoded: &str,
     ) {
@@ -402,8 +397,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_u64_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: u64,
         encoded: &str,
     ) {
@@ -412,8 +407,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_i64_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: i64,
         encoded: &str,
     ) {
@@ -422,8 +417,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_u128_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: u128,
         encoded: &str,
     ) {
@@ -432,8 +427,8 @@ pub(crate) mod testing {
     }
 
     pub fn test_i128_result(
-        encoder: &impl EncodingProtocol,
-        decoder: &impl DecodingProtocol,
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
         value: i128,
         encoded: &str,
     ) {

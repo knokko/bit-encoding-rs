@@ -4,11 +4,11 @@ use crate::*;
 /// not try to encode any data type compactly, but rather use a simple encoding
 /// based on their binary representation. The corresponding decoding protocol is
 /// *SimpleDecodingProtocol*.
-pub struct SimpleEncodingProtocol {}
+pub struct SimpleIntEncodingProtocol {}
 
-impl SimpleEncodingProtocol {
+impl SimpleIntEncodingProtocol {
     pub const fn new() -> Self {
-        SimpleEncodingProtocol {}
+        SimpleIntEncodingProtocol {}
     }
 
     pub fn write_unsigned(
@@ -37,7 +37,7 @@ impl SimpleEncodingProtocol {
     }
 }
 
-impl EncodingProtocol for SimpleEncodingProtocol {
+impl IntEncodingProtocol for SimpleIntEncodingProtocol {
     fn write_u8(&self, sink: &mut impl BitSink, value: u8) -> Result<(), WriteError> {
         self.write_unsigned(sink, 8, value as u128)
     }
@@ -86,8 +86,8 @@ mod tests {
 
     use crate::encoding::protocol::testing::*;
 
-    const ENCODER: SimpleEncodingProtocol = SimpleEncodingProtocol::new();
-    const DECODER: SimpleDecodingProtocol = SimpleDecodingProtocol::new();
+    const ENCODER: SimpleIntEncodingProtocol = SimpleIntEncodingProtocol::new();
+    const DECODER: SimpleIntDecodingProtocol = SimpleIntDecodingProtocol::new();
 
     #[test]
     fn test_symmetry() {

@@ -1,20 +1,20 @@
 use crate::*;
 
-pub struct DigitDecodingProtocol {
+pub struct DigitIntDecodingProtocol {
     digit_size: u8,
     short_zero_and_one: bool,
 
     max_num_digits: [u8; 10],
 }
 
-impl DigitDecodingProtocol {
+impl DigitIntDecodingProtocol {
     pub const fn new(digit_size: u8, short_zero_and_one: bool) -> Self {
         if digit_size < 2 || digit_size > 127 {
             // The commented line won't compile currently
             //panic!("Invalid digit size: {}", digit_size);
             panic!("Invalid digit size");
         }
-        Self {
+        DigitIntDecodingProtocol {
             digit_size,
             short_zero_and_one,
             max_num_digits: compute_relevant_num_digits(digit_size),
@@ -30,7 +30,7 @@ impl DigitDecodingProtocol {
         source: &mut impl BitSource,
         max_num_digits: u8,
     ) -> Result<u128, DecodeError> {
-        let simple_decoder = SimpleDecodingProtocol::new();
+        let simple_decoder = SimpleIntDecodingProtocol::new();
         let num_digit_values = get_num_digit_values(self.digit_size);
 
         let mut current_factor = 1;
@@ -106,7 +106,7 @@ impl DigitDecodingProtocol {
     }
 }
 
-impl DecodingProtocol for DigitDecodingProtocol {
+impl IntDecodingProtocol for DigitIntDecodingProtocol {
     fn read_u8(&self, source: &mut impl BitSource) -> Result<u8, DecodeError> {
         self.read_unsigned(source, self.max_num_digits[1])
             .map(|x| x as u8)
