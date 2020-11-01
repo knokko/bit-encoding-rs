@@ -2,17 +2,22 @@ use crate::*;
 
 pub struct U8VecBitSink {
     bytes: Vec<u8>,
-    bit_index: u8
+    bit_index: u8,
 }
 
 impl U8VecBitSink {
-
     pub fn new() -> Self {
-        Self { bytes: Vec::new(), bit_index: 0 }
+        Self {
+            bytes: Vec::new(),
+            bit_index: 0,
+        }
     }
 
     pub fn with_capacity(initial_capacity: usize) -> Self {
-        Self { bytes: Vec::with_capacity(initial_capacity), bit_index: 0 }
+        Self {
+            bytes: Vec::with_capacity(initial_capacity),
+            bit_index: 0,
+        }
     }
 
     pub fn get_bytes(&self) -> &Vec<u8> {
@@ -26,14 +31,14 @@ impl U8VecBitSink {
 }
 
 impl BitSink for U8VecBitSink {
-
     fn write(&mut self, bits: &[bool]) -> Result<(), WriteError> {
         // This may not be exact, but should be very accurate
         self.bytes.reserve(bits.len() / 8);
 
         // If we ended with a partial byte previously, we should continue with it
         let mut current_byte = match self.bit_index == 0 {
-            true => 0, false => self.bytes.pop().unwrap()
+            true => 0,
+            false => self.bytes.pop().unwrap(),
         };
 
         // Add all bits...

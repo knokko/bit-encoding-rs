@@ -3,11 +3,11 @@ use crate::*;
 /// The simple implementation of *IntEncodingProtocol*. This implementation will
 /// simply decode integers back from their binary representation (but always the
 /// least significant bits first).
-/// 
+///
 /// This implementation is ideal when every possible integer has an equal chance
 /// to be stored, but not so great when some integers (for instance the small
 /// integers) are much more common than the other integers.
-/// 
+///
 /// The corresponding encoding protocol is *SimpleIntEncodingProtocol*.
 pub struct SimpleIntDecodingProtocol {}
 

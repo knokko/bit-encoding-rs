@@ -114,7 +114,7 @@ mod tests {
     #[test]
     fn test_bytes_to_bools() {
         assert_eq!(Vec::<bool>::new(), bytes_to_bools(&[]));
-        assert_eq!(vec![F,F,F,F, F,F,F,F], bytes_to_bools(&[0]));
+        assert_eq!(vec![F, F, F, F, F, F, F, F], bytes_to_bools(&[0]));
 
         assert_eq!(vec![T, T, T, F, F, T, F, F], bytes_to_bools(&[39]));
 

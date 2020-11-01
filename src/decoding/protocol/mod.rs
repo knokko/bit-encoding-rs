@@ -6,8 +6,8 @@ mod simple;
 pub use digit::*;
 pub use simple::*;
 
-/// A protocol for decoding primitive integers from a *BitSource*. Every 
-/// implementation of this trait should have a corresponding *IntEncodingProtocol* 
+/// A protocol for decoding primitive integers from a *BitSource*. Every
+/// implementation of this trait should have a corresponding *IntEncodingProtocol*
 /// that encoded primitive integers to a *BitSink*.
 ///
 /// A simple implementation of *DecodingProtocol* would for instance decode

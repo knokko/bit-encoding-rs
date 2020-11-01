@@ -2,17 +2,22 @@ use crate::*;
 
 pub struct U32VecBitSink {
     ints: Vec<u32>,
-    bit_index: u8
+    bit_index: u8,
 }
 
 impl U32VecBitSink {
-
     pub fn new() -> Self {
-        Self { ints: Vec::new(), bit_index: 0 }
+        Self {
+            ints: Vec::new(),
+            bit_index: 0,
+        }
     }
 
     pub fn with_capacity(initial_capacity: usize) -> Self {
-        Self { ints: Vec::with_capacity(initial_capacity), bit_index: 0 }
+        Self {
+            ints: Vec::with_capacity(initial_capacity),
+            bit_index: 0,
+        }
     }
 
     pub fn get_ints(&self) -> &Vec<u32> {
@@ -22,7 +27,8 @@ impl U32VecBitSink {
     pub fn get_bits(&self) -> Vec<bool> {
         let mut bools = Vec::with_capacity(self.get_num_bools() as usize);
         let first_bound = match self.bit_index == 0 {
-            true => self.ints.len(), false => self.ints.len() - 1
+            true => self.ints.len(),
+            false => self.ints.len() - 1,
         };
         for index in 0..first_bound {
             let current_int = self.ints[index];
@@ -42,14 +48,14 @@ impl U32VecBitSink {
 }
 
 impl BitSink for U32VecBitSink {
-
     fn write(&mut self, bits: &[bool]) -> Result<(), WriteError> {
         // This may not be exact, but should be very accurate
         self.ints.reserve(bits.len() / 32);
 
         // If we ended with a partial byte previously, we should continue with it
         let mut current_int = match self.bit_index == 0 {
-            true => 0, false => self.ints.pop().unwrap()
+            true => 0,
+            false => self.ints.pop().unwrap(),
         };
 
         // Add all bits...

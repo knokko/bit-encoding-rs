@@ -6,8 +6,8 @@ mod simple;
 pub use digit::*;
 pub use simple::*;
 
-/// A protocol for encoding primitive integers into a *BitSink*. Every 
-/// implementation of this trait should have a corresponding *IntDecodingProtocol* 
+/// A protocol for encoding primitive integers into a *BitSink*. Every
+/// implementation of this trait should have a corresponding *IntDecodingProtocol*
 /// that can decode the data types that were encoded by this encoder.
 ///
 /// A simple implementation of *IntEncodingProtocol* would for instance encode
@@ -84,7 +84,10 @@ pub(crate) mod testing {
     use rand::distributions::Standard;
     use rand::prelude::*;
 
-    pub fn test_encoding_pair(encoder: &impl IntEncodingProtocol, decoder: &impl IntDecodingProtocol) {
+    pub fn test_encoding_pair(
+        encoder: &impl IntEncodingProtocol,
+        decoder: &impl IntDecodingProtocol,
+    ) {
         test_u8(encoder, decoder);
         test_i8(encoder, decoder);
         test_u16(encoder, decoder);
