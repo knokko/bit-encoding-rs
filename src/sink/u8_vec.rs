@@ -61,6 +61,14 @@ impl BitSink for U8VecBitSink {
         self.bytes.shrink_to_fit();
         Ok(())
     }
+
+    fn get_num_bools(&self) -> u64 {
+        if self.bit_index == 0 {
+            self.bytes.len() as u64 * 8
+        } else {
+            (self.bytes.len() as u64 - 1) * 8 + self.bit_index as u64
+        }
+    }
 }
 
 #[cfg(test)]

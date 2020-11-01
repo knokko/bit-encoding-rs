@@ -27,7 +27,7 @@ impl DigitDecodingProtocol {
 
     fn read_digit_part(
         &self,
-        source: &mut dyn BitSource,
+        source: &mut impl BitSource,
         max_num_digits: u8,
     ) -> Result<u128, DecodeError> {
         let simple_decoder = SimpleDecodingProtocol::new();
@@ -53,7 +53,7 @@ impl DigitDecodingProtocol {
 
     fn read_unsigned(
         &self,
-        source: &mut dyn BitSource,
+        source: &mut impl BitSource,
         max_num_digits: u8,
     ) -> Result<u128, DecodeError> {
         if self.short_zero_and_one {
@@ -78,7 +78,7 @@ impl DigitDecodingProtocol {
 
     fn read_signed(
         &self,
-        source: &mut dyn BitSource,
+        source: &mut impl BitSource,
         max_num_digits: u8,
     ) -> Result<i128, DecodeError> {
         if self.short_zero_and_one {

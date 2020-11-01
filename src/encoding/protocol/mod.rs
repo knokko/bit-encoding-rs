@@ -322,7 +322,7 @@ pub(crate) mod testing {
     }
 
     fn test_result(
-        action: &mut dyn FnMut(&mut BoolVecBitSink) -> Result<(), WriteError>,
+        mut action: impl FnMut(&mut BoolVecBitSink) -> Result<(), WriteError>,
         encoded: &str,
     ) {
         for character in encoded.chars() {
@@ -347,7 +347,7 @@ pub(crate) mod testing {
         value: u8,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_u8(sink, value), encoded);
+        test_result(|sink| encoder.write_u8(sink, value), encoded);
         decoding::testing::test_u8_result(decoder, value, encoded);
     }
 
@@ -357,7 +357,7 @@ pub(crate) mod testing {
         value: i8,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_i8(sink, value), encoded);
+        test_result(|sink| encoder.write_i8(sink, value), encoded);
         decoding::testing::test_i8_result(decoder, value, encoded);
     }
 
@@ -367,7 +367,7 @@ pub(crate) mod testing {
         value: u16,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_u16(sink, value), encoded);
+        test_result(|sink| encoder.write_u16(sink, value), encoded);
         decoding::testing::test_u16_result(decoder, value, encoded);
     }
 
@@ -377,7 +377,7 @@ pub(crate) mod testing {
         value: i16,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_i16(sink, value), encoded);
+        test_result(|sink| encoder.write_i16(sink, value), encoded);
         decoding::testing::test_i16_result(decoder, value, encoded);
     }
 
@@ -387,7 +387,7 @@ pub(crate) mod testing {
         value: u32,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_u32(sink, value), encoded);
+        test_result(|sink| encoder.write_u32(sink, value), encoded);
         decoding::testing::test_u32_result(decoder, value, encoded);
     }
 
@@ -397,7 +397,7 @@ pub(crate) mod testing {
         value: i32,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_i32(sink, value), encoded);
+        test_result(|sink| encoder.write_i32(sink, value), encoded);
         decoding::testing::test_i32_result(decoder, value, encoded);
     }
 
@@ -407,7 +407,7 @@ pub(crate) mod testing {
         value: u64,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_u64(sink, value), encoded);
+        test_result(|sink| encoder.write_u64(sink, value), encoded);
         decoding::testing::test_u64_result(decoder, value, encoded);
     }
 
@@ -417,7 +417,7 @@ pub(crate) mod testing {
         value: i64,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_i64(sink, value), encoded);
+        test_result(|sink| encoder.write_i64(sink, value), encoded);
         decoding::testing::test_i64_result(decoder, value, encoded);
     }
 
@@ -427,7 +427,7 @@ pub(crate) mod testing {
         value: u128,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_u128(sink, value), encoded);
+        test_result(|sink| encoder.write_u128(sink, value), encoded);
         decoding::testing::test_u128_result(decoder, value, encoded);
     }
 
@@ -437,7 +437,7 @@ pub(crate) mod testing {
         value: i128,
         encoded: &str,
     ) {
-        test_result(&mut |sink| encoder.write_i128(sink, value), encoded);
+        test_result(|sink| encoder.write_i128(sink, value), encoded);
         decoding::testing::test_i128_result(decoder, value, encoded);
     }
 }

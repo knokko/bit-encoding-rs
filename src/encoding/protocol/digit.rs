@@ -63,7 +63,7 @@ impl DigitEncodingProtocol {
 
     fn write_digit_part(
         &self,
-        sink: &mut dyn BitSink,
+        sink: &mut impl BitSink,
         mut value: u128,
         max_num_digits: u8,
     ) -> Result<(), WriteError> {
@@ -87,7 +87,7 @@ impl DigitEncodingProtocol {
 
     fn write_unsigned(
         &self,
-        sink: &mut dyn BitSink,
+        sink: &mut impl BitSink,
         mut value: u128,
         max_num_digits: u8,
     ) -> Result<(), WriteError> {
@@ -107,7 +107,7 @@ impl DigitEncodingProtocol {
 
     fn write_signed(
         &self,
-        sink: &mut dyn BitSink,
+        sink: &mut impl BitSink,
         mut value: i128,
         max_num_digits: u8,
     ) -> Result<(), WriteError> {

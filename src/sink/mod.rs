@@ -4,11 +4,13 @@ mod errors;
 // Implementations
 mod bool_vec;
 mod u8_vec;
+mod u32_vec;
 mod void;
 
 // Export all as part of this module
 pub use bool_vec::*;
 pub use u8_vec::*;
+pub use u32_vec::*;
 pub use errors::*;
 pub use void::*;
 
@@ -36,4 +38,6 @@ pub trait BitSink {
     /// to this BitSink. Implementations of BitSink may rely on this method
     /// being called, while others may ignore it completely.
     fn finish(&mut self) -> Result<(), WriteError>;
+
+    fn get_num_bools(&self) -> u64;
 }

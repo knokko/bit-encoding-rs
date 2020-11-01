@@ -74,6 +74,10 @@ impl BitSink for BoolVecBitSink {
         // No errors should occur here
         Ok(())
     }
+
+    fn get_num_bools(&self) -> u64 {
+        self.vec.len() as u64
+    }
 }
 
 #[cfg(test)]

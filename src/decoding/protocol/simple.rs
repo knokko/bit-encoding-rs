@@ -13,7 +13,7 @@ impl SimpleDecodingProtocol {
 
     pub fn read_unsigned(
         &self,
-        source: &mut dyn BitSource,
+        source: &mut impl BitSource,
         num_bits: usize,
     ) -> Result<u128, DecodeError> {
         let mut bits = vec![false; num_bits];
@@ -33,7 +33,7 @@ impl SimpleDecodingProtocol {
 
     pub fn read_signed(
         &self,
-        source: &mut dyn BitSource,
+        source: &mut impl BitSource,
         num_bits: usize,
     ) -> Result<i128, DecodeError> {
         let unsigned = self.read_unsigned(source, num_bits)?;

@@ -19,6 +19,10 @@ impl BitSink for VoidBitSink {
     fn finish(&mut self) -> Result<(), WriteError> {
         Ok(())
     }
+
+    fn get_num_bools(&self) -> u64 {
+        0
+    }
 }
 
 #[cfg(test)]
