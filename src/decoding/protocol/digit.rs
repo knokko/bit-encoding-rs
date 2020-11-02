@@ -1,5 +1,8 @@
 use crate::*;
 
+/// An *IntDecodingProtocol* that decodes the digit-based encoding of
+/// *DigitIntEncodingProtocol*. See the documentation of *DigitIntEncodingProtocol*
+/// for more information.
 pub struct DigitIntDecodingProtocol {
     digit_size: u8,
     short_zero_and_one: bool,
@@ -8,6 +11,9 @@ pub struct DigitIntDecodingProtocol {
 }
 
 impl DigitIntDecodingProtocol {
+    /// Constructs a new instance of *DigitIntEncodingProtocol* with the given
+    /// *digit_size* and *short_zero_and_one* option. See the documentation of
+    /// *DigitIntEncodingProtocol* for more information.
     pub const fn new(digit_size: u8, short_zero_and_one: bool) -> Self {
         if digit_size < 2 || digit_size > 127 {
             // The commented line won't compile currently
@@ -21,6 +27,10 @@ impl DigitIntDecodingProtocol {
         }
     }
 
+    /// Constructs a new instance of *DigitIntDecodingProtocol* that uses the first
+    /// configuration (constructor parameters) that I found to perform well. The
+    /// *v1* function of *DigitIntEncodingProtocol* returns a corresponding
+    /// encoder for this decoder.
     pub const fn v1() -> Self {
         Self::new(3, true)
     }
@@ -155,3 +165,6 @@ impl IntDecodingProtocol for DigitIntDecodingProtocol {
         self.read_signed(source, self.max_num_digits[8])
     }
 }
+
+// This struct doesn't have its own unit tests, but relies on the unit tests of
+// *DigitIntEncodingProtocol* to improve code reuse in the unit tests.

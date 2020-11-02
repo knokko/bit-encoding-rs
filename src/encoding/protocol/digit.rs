@@ -32,6 +32,68 @@ pub(crate) const fn compute_relevant_num_digits(digit_size: u8) -> [u8; 10] {
     result
 }
 
+/// An *IntEncodingProtocol* based on writing integers digit by digit that uses a
+/// special digit value as terminator digit. This encoding protocol is suitable for
+/// encoding values that are often small. 
+/// 
+/// It is inspired by the (decimal) notation of integers. Take for instance the
+/// integer 537. It needs only 4 digits (including the dot as 'terminator'), but
+/// this notation can just as well be used to store numbers of many more digits.
+/// Even if every digit would take an entire byte, this would already be equally
+/// good as the simple 32-bit representation of 537.
+/// 
+/// But we don't need an entire byte to store 1 decimal digit: there are only 10
+/// possible values plus 1 terminator, so only 11 from the 256 possibilities would
+/// be used, so using half a byte per digit would work as well, and would be
+/// twice as short. But even then, only 11 out of the 16 possible half-byte values
+/// are used. That is a huge improvement, but still not optimal.
+/// 
+/// To avoid wasting possible digit values, the number of possible digits plus 1
+/// (for the terminator) should be a power of 2. So if we would want to use half
+/// a byte (4 bits) per digit, we should have 15 possible digit values instead of
+/// only 10. Then we can often write the same number with lesser digits. For
+/// instance, the 10 digit system needs 4 digits to encode 3000, while the 15
+/// digit system only needs 3 digits to do so.
+/// 
+/// The 15 digit system explained above is quite good, but the idea mentioned
+/// above can be generalized further. For instance, we could also use a 7 digit
+/// system (3 bits per digit) or a 31 digit system (5 bits per digit). Which of
+/// these systems works best, depends on the number to be encoded. This protocol
+/// can support all such systems because its *digit_size* (the number of bits per
+/// digit is configurable).
+/// 
+/// To come back at the example, I will show how this protocol would encode the
+/// number 537 with a *digit_size* of 4 (so 15 digits and 1 terminator):
+/// 537 can be written as 
+/// 
+/// 12 * 1 + 5 * 15 + 2 * 15 * 15, which would be encoded as
+/// 
+/// 0011 1010 0100 1111. The binary encoding used for the digits is the reverse of
+/// what you would probably expect (so 1 would be encoded as 1000 rather than 0001).
+/// So 12 is encoded as 0011, 5 is encoded as 1010, and 2 is encoded as 0100.
+/// And finally, the terminating digit is 15, which is encoded as 1111. So in this
+/// example, we needed only 16 bits = 2 bytes to encode the number 537. Using this
+/// encoding, we would even be able to write 15 + 15 * 15 + 15 * 15 * 15 = 3615
+/// using only 2 bytes.
+/// 
+/// So far, I explained the general concept of this encoding, but there is 1 small
+/// thing more to tell. In real applications, it is usually the case that a big
+/// part of the features is only used by a small part of the users. When storing
+/// data for these users, the integers 0 and 1 are very frequently used to encode
+/// that these features are unused (for instance, when encoding a list by first
+/// encoding its size, this size would usually be 0). If this is indeed the case,
+/// it would be beneficial to give 0 and 1 a very short encoding (even shorter than
+/// the 1 and 2 digits you would normally use).
+/// 
+/// This is implemented by letting the first bit of the number be a discriminator
+/// bit: if its 0, the encoded number is at least 2, and if its 1, the encoded
+/// number is 0 or 1. In the latter case, the second bit is then used to tell which
+/// of the 2 values it is, which makes it possible to encode 0 and 1 using only 2
+/// bits. In the former case, the 'regular' digit encoding of the number - 2 will
+/// be written after the first bit. This means that the encoding size of all numbers
+/// greater than 1 is increased by 1 bit. Because this is quite a waste if 0 and 1
+/// aren't used frequently, this behavior is configurable: it will only be used if
+/// *short_zero_and_one* is true.
 pub struct DigitIntEncodingProtocol {
     digit_size: u8,
     short_zero_and_one: bool,
@@ -40,6 +102,12 @@ pub struct DigitIntEncodingProtocol {
 }
 
 impl DigitIntEncodingProtocol {
+    /// Constructs a new instance of *DigitIntEncodingProtocol* using the given
+    /// *digit_size* and *short_zero_and_one* configuration. As explained in the
+    /// documentation of this struct, *digit_size* is the number of bits used to
+    /// encode a single digit, and *short_zero_and_one* should be true if you
+    /// want the encoder to use extra short encodings for 0 and 1 at the expense
+    /// of a slightly longer encoding of the rest of the numbers.
     pub const fn new(digit_size: u8, short_zero_and_one: bool) -> Self {
         if digit_size < 2 || digit_size > 127 {
             // The commented line won't compile, at least for now
@@ -53,6 +121,12 @@ impl DigitIntEncodingProtocol {
         }
     }
 
+    /// Constructs a new instance of *DigitIntEncodingProtocol* that uses the first
+    /// configuration (constructor parameters) that I found to perform well. The
+    /// *v1* function of *DigitIntDecodingProtocol* returns a corresponding
+    /// decoder for this encoder.
+    /// 
+    /// This configuration uses *short_zero_and_one* and has a *digit_size* of 3.
     pub const fn v1() -> Self {
         Self::new(3, true)
     }

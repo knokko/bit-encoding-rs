@@ -12,11 +12,13 @@ use crate::*;
 pub struct SimpleIntDecodingProtocol {}
 
 impl SimpleIntDecodingProtocol {
+    /// Constructs a new instance of *SimpleIntDecodingProtocol*. Note that this
+    /// is basically a no-op since this struct doesn't have fields.
     pub const fn new() -> Self {
         SimpleIntDecodingProtocol {}
     }
 
-    pub fn read_unsigned(
+    pub(crate) fn read_unsigned(
         &self,
         source: &mut impl BitSource,
         num_bits: usize,
@@ -36,7 +38,7 @@ impl SimpleIntDecodingProtocol {
         Ok(result)
     }
 
-    pub fn read_signed(
+    pub(crate) fn read_signed(
         &self,
         source: &mut impl BitSource,
         num_bits: usize,

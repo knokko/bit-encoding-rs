@@ -7,11 +7,13 @@ use crate::*;
 pub struct SimpleIntEncodingProtocol {}
 
 impl SimpleIntEncodingProtocol {
+    /// Constructs a new instance of *SimpleIntEncodingProtocol*. Note that this is
+    /// actually a no-op since this struct doesn't have any fields.
     pub const fn new() -> Self {
         SimpleIntEncodingProtocol {}
     }
 
-    pub fn write_unsigned(
+    pub(crate) fn write_unsigned(
         &self,
         sink: &mut impl BitSink,
         num_bits: usize,
@@ -24,7 +26,7 @@ impl SimpleIntEncodingProtocol {
         sink.write(&bools[0..num_bits])
     }
 
-    pub fn write_signed(
+    pub(crate) fn write_signed(
         &self,
         sink: &mut impl BitSink,
         num_bits: usize,

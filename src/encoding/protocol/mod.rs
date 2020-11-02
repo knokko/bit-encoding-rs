@@ -399,6 +399,8 @@ pub(crate) mod testing {
         decoding::testing::test_i32_result(decoder, value, encoded);
     }
 
+    // I should use these functions someday
+    #[allow(dead_code)]
     pub fn test_u64_result(
         encoder: &impl IntEncodingProtocol,
         decoder: &impl IntDecodingProtocol,
@@ -409,6 +411,7 @@ pub(crate) mod testing {
         decoding::testing::test_u64_result(decoder, value, encoded);
     }
 
+    #[allow(dead_code)]
     pub fn test_i64_result(
         encoder: &impl IntEncodingProtocol,
         decoder: &impl IntDecodingProtocol,
@@ -419,6 +422,7 @@ pub(crate) mod testing {
         decoding::testing::test_i64_result(decoder, value, encoded);
     }
 
+    #[allow(dead_code)]
     pub fn test_u128_result(
         encoder: &impl IntEncodingProtocol,
         decoder: &impl IntDecodingProtocol,
@@ -429,6 +433,7 @@ pub(crate) mod testing {
         decoding::testing::test_u128_result(decoder, value, encoded);
     }
 
+    #[allow(dead_code)]
     pub fn test_i128_result(
         encoder: &impl IntEncodingProtocol,
         decoder: &impl IntDecodingProtocol,

@@ -10,16 +10,16 @@ pub use simple::*;
 /// implementation of this trait should have a corresponding *IntEncodingProtocol*
 /// that encoded primitive integers to a *BitSink*.
 ///
-/// A simple implementation of *DecodingProtocol* would for instance decode
+/// A simple implementation of *IntDecodingProtocol* would for instance decode
 /// integers from their binary representation (reading 32 bools to decode back
-/// into a u32 value). In fact, this is what *SimpleDecodingProtocol* does.
+/// into a u32 value). In fact, this is what *SimpleIntDecodingProtocol* does.
 ///
 /// Such a simple implementation is perfect when every value has the same chance
 /// to be stored. However, smaller values are often more common, so a more clever
 /// protocol would exploit this by using lesser bools to store smaller numbers.
 ///
-/// When you have a corresponding pair of *EncodingProtocol* and
-/// *DecodingProtocol*, you can use them like this:
+/// When you have a corresponding pair of *IntEncodingProtocol* and
+/// *IntDecodingProtocol*, you can use them like this:
 ///
 /// ```
 ///
@@ -52,7 +52,7 @@ pub trait IntDecodingProtocol {
     /// Decodes a u8 value from the bits coming from *source*
     fn read_u8(&self, source: &mut impl BitSource) -> Result<u8, DecodeError>;
 
-    /// Decoes an i18 value from the bits coming from *source*
+    /// Decoes an i8 value from the bits coming from *source*
     fn read_i8(&self, source: &mut impl BitSource) -> Result<i8, DecodeError>;
 
     /// Decodes a u16 value from the bits coming from *source*
@@ -129,18 +129,22 @@ pub(crate) mod testing {
         test_result(|source| decoder.read_i32(source), value, encoded);
     }
 
+    // I should use these functions someday
+    #[allow(dead_code)]
     pub fn test_u64_result(decoder: &impl IntDecodingProtocol, value: u64, encoded: &str) {
         test_result(|source| decoder.read_u64(source), value, encoded);
     }
-
+    #[allow(dead_code)]
     pub fn test_i64_result(decoder: &impl IntDecodingProtocol, value: i64, encoded: &str) {
         test_result(|source| decoder.read_i64(source), value, encoded);
     }
 
+    #[allow(dead_code)]
     pub fn test_u128_result(decoder: &impl IntDecodingProtocol, value: u128, encoded: &str) {
         test_result(|source| decoder.read_u128(source), value, encoded);
     }
 
+    #[allow(dead_code)]
     pub fn test_i128_result(decoder: &impl IntDecodingProtocol, value: i128, encoded: &str) {
         test_result(|source| decoder.read_i128(source), value, encoded);
     }
