@@ -3,7 +3,7 @@ use crate::*;
 /// An implementation of *BitSink* that uses a *Vec\<u32\>* to store the bools written
 /// into it. Every *u32* will represent 32 *bool*s (except for the last one if the
 /// number of bools is not a multiple of 32).
-/// 
+///
 /// Since every *u32* takes 4 bytes in memory and this implementation stores 1 *u32*
 /// per 32 *bool*s, this implementation is very efficient in terms of memory usage.
 /// However, packing all these bools into integers makes this implementation a bit
@@ -11,7 +11,7 @@ use crate::*;
 /// is nearly twice as slow as that of *BoolVecBitSink* (but note that the
 /// time to write bools into the *BitSink* is rarely the performance bottleneck
 /// of the encoding process).
-/// 
+///
 /// This implementation was an attempt to create a *BitSink* that is just as
 /// efficient with memory as *U8VecBitSink*, but has better performance.
 /// Unfortunately, the performance appeared to be only a little bit better.
@@ -47,14 +47,14 @@ impl U32VecBitSink {
     /// Creates a *Vec* of bools that shows exactly which bools were written into
     /// this sink in which order: The first bool of the *Vec* will be the first
     /// bool that was written into this sink.
-    /// 
+    ///
     /// # Example
     /// ```
     /// use bit_encoding::*;
-    /// 
+    ///
     /// let mut sink = U32VecBitSink::new();
     /// sink.write(&[true, false, true]);
-    /// 
+    ///
     /// assert_eq!(vec![true, false, true], sink.get_bools());
     /// ```
     pub fn get_bools(&self) -> Vec<bool> {

@@ -74,12 +74,12 @@ pub fn bools_to_bytes(bools: &[bool]) -> Vec<u8> {
 /// converted to 8 booleans. This function is basically the opposite of
 /// *bools_to_bytes*: the result of *bools_to_bytes(bytes_to_bools(some_bytes))*
 /// will always be *some_bytes* again. See the documentation of *bools_to_bytes*
-/// for details. 
-/// 
+/// for details.
+///
 /// # Example
 /// ```
 /// use bit_encoding::bytes_to_bools;
-/// 
+///
 /// assert_eq!(vec![true, true, false, true, false, false, false, false], bytes_to_bools(&[11]));
 /// ```
 /// (The example above encodes only 1 byte, but it is possible to convert more than 1

@@ -2,19 +2,19 @@ use crate::*;
 
 /// An implementation of *BitSource* that simply reads *bool*s from a slice of
 /// *bool*s. The *bool*s that occur first in the slice will be read first.
-/// 
+///
 /// # Example
 /// ```
 /// use bit_encoding::*;
-/// 
+///
 /// let bool_array = [true, false, true];
 /// let mut source = BoolSliceBitSource::new(&bool_array);
-/// 
+///
 /// // The initial value doesn't matter, but we have to give something
 /// let mut array1 = [false];
 /// source.read(&mut array1);
 /// assert_eq!([true], array1);
-/// 
+///
 /// // Initial values again do not matter, but have to be chosen
 /// let mut array2 = [false, false];
 /// source.read(&mut array2);

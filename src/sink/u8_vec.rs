@@ -3,7 +3,7 @@ use crate::*;
 /// An implementation of *BitSink* that uses a *Vec\<u8\>* to store the bools written
 /// into it. Every *u8* will represent 8 *bool*s (except for the last one if the
 /// number of bools is not a multiple of 8).
-/// 
+///
 /// Since every *u8* takes 1 byte in memory and this implementation stores 1 *u8*
 /// per 8 *bool*s, this implementation is very efficient in terms of memory usage.
 /// However, packing all these bools into bytes makes this implementation a bit
@@ -42,20 +42,20 @@ impl U8VecBitSink {
     /// Creates a *Vec* of bools that shows exactly which bools were written into
     /// this sink in which order: The first bool of the *Vec* will be the first
     /// bool that was written into this sink.
-    /// 
+    ///
     /// # Example
     /// ```
     /// use bit_encoding::*;
-    /// 
+    ///
     /// let mut sink = U8VecBitSink::new();
     /// sink.write(&[true, false, true]);
-    /// 
+    ///
     /// assert_eq!(vec![true, false, true], sink.get_bools());
     /// ```
     pub fn get_bools(&self) -> Vec<bool> {
         let mut as_bools = bytes_to_bools(self.get_bytes());
         if self.bit_index > 0 {
-            for _counter in 0 .. 8 - self.bit_index {
+            for _counter in 0..8 - self.bit_index {
                 as_bools.pop();
             }
             as_bools.shrink_to_fit();
