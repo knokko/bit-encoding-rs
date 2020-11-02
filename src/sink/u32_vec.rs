@@ -1,11 +1,27 @@
 use crate::*;
 
+/// An implementation of *BitSink* that uses a *Vec\<u32\>* to store the bools written
+/// into it. Every *u32* will represent 32 *bool*s (except for the last one if the
+/// number of bools is not a multiple of 32).
+/// 
+/// Since every *u32* takes 4 bytes in memory and this implementation stores 1 *u32*
+/// per 32 *bool*s, this implementation is very efficient in terms of memory usage.
+/// However, packing all these bools into integers makes this implementation a bit
+/// slow. For instance, it looks like the *write* method of this implementation
+/// is nearly twice as slow as that of *BoolVecBitSink* (but note that the
+/// time to write bools into the *BitSink* is rarely the performance bottleneck
+/// of the encoding process).
+/// 
+/// This implementation was an attempt to create a *BitSink* that is just as
+/// efficient with memory as *U8VecBitSink*, but has better performance.
+/// Unfortunately, the performance appeared to be only a little bit better.
 pub struct U32VecBitSink {
     ints: Vec<u32>,
     bit_index: u8,
 }
 
 impl U32VecBitSink {
+    /// Constructs a new and empty instance of *U32VecBitSink*
     pub fn new() -> Self {
         Self {
             ints: Vec::new(),
@@ -13,6 +29,8 @@ impl U32VecBitSink {
         }
     }
 
+    /// Constructs a new and empty instance of *U32VecBitSink* with an initial
+    /// capacity of *initial_capacity* *u32*s.
     pub fn with_capacity(initial_capacity: usize) -> Self {
         Self {
             ints: Vec::with_capacity(initial_capacity),
@@ -20,11 +38,26 @@ impl U32VecBitSink {
         }
     }
 
+    /// Gets a reference to the *u32* *Vec* storing the data written into this
+    /// sink.
     pub fn get_ints(&self) -> &Vec<u32> {
         &self.ints
     }
 
-    pub fn get_bits(&self) -> Vec<bool> {
+    /// Creates a *Vec* of bools that shows exactly which bools were written into
+    /// this sink in which order: The first bool of the *Vec* will be the first
+    /// bool that was written into this sink.
+    /// 
+    /// # Example
+    /// ```
+    /// use bit_encoding::*;
+    /// 
+    /// let mut sink = U32VecBitSink::new();
+    /// sink.write(&[true, false, true]);
+    /// 
+    /// assert_eq!(vec![true, false, true], sink.get_bools());
+    /// ```
+    pub fn get_bools(&self) -> Vec<bool> {
         let mut bools = Vec::with_capacity(self.get_num_bools() as usize);
         let first_bound = match self.bit_index == 0 {
             true => self.ints.len(),
@@ -108,7 +141,7 @@ mod tests {
             encoder.write_u8(&mut sink, counter).unwrap();
         }
 
-        let as_bools = sink.get_bits();
+        let as_bools = sink.get_bools();
         let mut source = BoolSliceBitSource::new(&as_bools);
         let decoder = DigitIntDecodingProtocol::v1();
 

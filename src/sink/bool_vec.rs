@@ -46,6 +46,20 @@ impl BoolVecBitSink {
         bools_to_bytes(&self.vec)
     }
 
+    /// Creates a nice to read string representation of the bools written into this
+    /// sink. Every occurrence of true is written as "1" and every occurrence of
+    /// false is written as "0". The first character of the string denotes the first
+    /// bool written into this sink.
+    /// 
+    /// # Example
+    /// ```
+    /// use bit_encoding::*;
+    /// 
+    /// let mut sink = BoolVecBitSink::new();
+    /// sink.write(&[false, true, true]);
+    /// 
+    /// assert_eq!("011", &sink.create_bit_string());
+    /// ```
     pub fn create_bit_string(&self) -> String {
         let mut result = String::with_capacity(self.vec.len());
         for bit in &self.vec {

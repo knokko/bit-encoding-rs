@@ -32,12 +32,15 @@ pub trait BitSink {
 
     /// Marks this BitSink as finished.
     /// After this call, write must not be called anymore,
-    /// or undefined behavior will occur.
+    /// or undefined behavior will occur (no memory safety or something, but write
+    /// may panic, or just continue working).
     ///
     /// This method should be called after the user is done with writing
     /// to this BitSink. Implementations of BitSink may rely on this method
     /// being called, while others may ignore it completely.
     fn finish(&mut self) -> Result<(), WriteError>;
 
+    /// Gets the total number of bools that have been written into this sink so
+    /// far.
     fn get_num_bools(&self) -> u64;
 }

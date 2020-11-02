@@ -1,7 +1,7 @@
-mod bool_vec;
+mod bool_slice;
 mod errors;
 
-pub use bool_vec::*;
+pub use bool_slice::*;
 pub use errors::*;
 
 /// A type from which bools can be read.

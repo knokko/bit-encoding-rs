@@ -5,7 +5,8 @@ use crate::*;
 pub struct VoidBitSink {}
 
 impl VoidBitSink {
-    /// Creates a new instance of VoidBitSink.
+    /// Creates a new instance of VoidBitSink. This is a no-op since this struct
+    /// doesn't have any fields.
     pub fn new() -> Self {
         Self {}
     }
