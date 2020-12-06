@@ -20,6 +20,10 @@ use crate::*;
 /// source.read(&mut array2);
 /// assert_eq!([false, true], array2);
 /// ```
+/// 
+/// This implementation has excellent performance because minimal work is needed for
+/// calls to *read*, but its memory usage is not so great because Rust uses an
+/// entire byte to store 1 *bool*.
 pub struct BoolSliceBitSource<'a> {
     slice: &'a [bool],
 }
@@ -55,5 +59,37 @@ impl<'a> BitSource for BoolSliceBitSource<'a> {
         self.slice = &self.slice[dest.len()..self.slice.len()];
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::*;
+
+    #[test]
+    fn basic_tests() {
+        super::test_helper::basic_tests(&|slice| {
+            let mut as_vec = vec![false; slice.len()];
+            as_vec.copy_from_slice(slice);
+
+            // Not so neat, but it's only a unit test anyway
+            let leaked_vec = Box::leak(Box::new(as_vec));
+            let source = BoolSliceBitSource::new(leaked_vec);
+            source
+        });
+    }
+
+    #[test]
+    fn random_tests() {
+        super::test_helper::random_tests(&|slice| {
+            let mut as_vec = vec![false; slice.len()];
+            as_vec.copy_from_slice(slice);
+
+            // Not so neat, but it's only a unit test anyway
+            let leaked_vec = Box::leak(Box::new(as_vec));
+            let source = BoolSliceBitSource::new(leaked_vec);
+            source
+        });
     }
 }
